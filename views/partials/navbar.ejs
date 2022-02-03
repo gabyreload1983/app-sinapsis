@@ -1,0 +1,140 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/urbano">Sinapsis SRL</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarScroll"
+      aria-controls="navbarScroll"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul
+        class="navbar-nav w-100 d-flex my-2 my-lg-0 navbar-nav-scroll"
+        style="--bs-scroll-height: 100%"
+      >
+        <% if(user){ %>
+
+        <!-- TALLER -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="tallerDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Taller
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-dark"
+            aria-labelledby="tallerDropdown"
+          >
+            <li>
+              <a class="dropdown-item" href="/urbano/taller/pc"
+                >PC Pendientes</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/urbano/taller/imp"
+                >Impresoras Pendientes</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/urbano/taller/ordenes-en-proceso"
+                >Ordenes en Proceso</a
+              >
+            </li>
+          </ul>
+        </li>
+        <!-- Estadisticas -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="estadisticasDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Estadisticas
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-dark"
+            aria-labelledby="estadisticasDropdown"
+          >
+            <li>
+              <a
+                class="dropdown-item"
+                href="/urbano/taller/estadisticas-tecnicos"
+                >Tecnicos</a
+              >
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <!-- BUSCAR ORDEN -->
+      <form
+        class="d-flex"
+        action="/urbano/taller/ordenReparacion"
+        method="GET"
+        id="formBuscarOrden"
+      >
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Buscar Orden"
+          aria-label="Search"
+          name="orden"
+          id="orden"
+          type="number"
+          minlength="5"
+          maxlength="5"
+        />
+        <button class="btn btn-outline-success" id="btn-orden" type="submit">
+          Buscar
+        </button>
+      </form>
+
+      <!-- Log in -->
+      <div class="ms-auto">
+        <ul class="navbar-nav navbar-nav-scroll">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="tallerDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="bi bi-person-circle"></i> <%= user.email %>
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-dark"
+              aria-labelledby="tallerDropdown"
+            >
+              <li>
+                <a class="dropdown-item" href="/logout">Log out</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <% } else{ %>
+      <div class="ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Log in</a>
+        </li>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</nav>

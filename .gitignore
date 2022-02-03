@@ -1,0 +1,4 @@
+/node_modules
+/config/development.json
+/config/testing.json
+/logger/files

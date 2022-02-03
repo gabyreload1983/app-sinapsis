@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <!-- NAV -->
+    <%- include("./partials/navbar.ejs") %>
+    <div class="container-fluid pt-5 min-vh-100" id="main">
+      <div class="container pt-4" id="content">
+        <!-- Contenido -->
+        <div class="row mt-5 justify-content-center align-items-center">
+          <div class="col-12 col-lg-4">
+            <form class="form_login bg-white border rounded border-primary p-3">
+              <h2>Log in</h2>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  required
+                />
+                <div class="email error"></div>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  required
+                />
+                <div class="password error"></div>
+              </div>
+              <button class="btn btn-primary" id="btnForm">Log in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <%- include("./partials/js.ejs") %>
+    <!-- Log in -->
+    <script src="/js/login.js"></script>
+  </body>
+</html>

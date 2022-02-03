@@ -1,0 +1,13 @@
+{
+  "jwtPrivateKey": "",
+  "mongoDb": "",
+  "urbanoHost": "",
+  "urbanoDb": "",
+  "urbanoPass": "",
+  "urbanoUser": "",
+  "ticketHost": "",
+  "ticketDb": "",
+  "ticketPass": "",
+  "ticketUser": "",
+  "PORT": ""
+}

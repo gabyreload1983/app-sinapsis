@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <!-- NAV -->
+    <%- include("./partials/navbar.ejs") %>
+    <div class="container-fluid pt-5 min-vh-100" id="main">
+      <div class="container pt-4" id="content">
+        <!-- Contenido -->
+        <!-- Head -->
+        <div class="row align-items-center bg-primary rounded-3 mx-0 mb-2">
+          <div class="col-1 d-none d-xl-block">
+            <p class="text-center text-white m-0 text-uppercase">
+              <%= titulo %>
+            </p>
+          </div>
+          <div class="col">
+            <p class="text-center text-white m-0 p-1 text-uppercase">
+              Cantidad de ordenes: <%= ordenes.length %>
+            </p>
+          </div>
+          <div class="col d-none d-xl-block">
+            <p class="text-center text-white m-0 text-uppercase">
+              Reparaciones por dia: <%= reparacionesPorDia %>
+            </p>
+          </div>
+          <div class="col">
+            <p class="text-center text-white m-0 text-uppercase">
+              Demora: <%= demora %> dias
+            </p>
+          </div>
+        </div>
+        <!-- Accordion -->
+        <div class="accordion" id="accordionOrdenes">
+          <% ordenes.forEach(orden => { %>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading<%= orden.nrocompro %>">
+              <div class="row justify-content-around m-0">
+                <button
+                  class="accordion-button collapsed prioridad<%= orden.prioridad %>"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse<%= orden.nrocompro %>"
+                  aria-expanded="false"
+                  aria-controls="collapse<%= orden.nrocompro %>"
+                >
+                  <div class="col-1">#<%= fila += 1 %></div>
+                  <div class="col"><%= orden.nrocompro %></div>
+                  <div class="col-4 d-none d-xl-block">
+                    <%= orden.prioridad %>
+                  </div>
+                  <div class="col"><%= orden.nombre %></div>
+                  <div class="col d-none d-xl-block">
+                    TECNICO: <%= orden.tecnico %>
+                  </div>
+                </button>
+              </div>
+            </h2>
+
+            <div
+              id="collapse<%= orden.nrocompro %>"
+              class="accordion-collapse collapse"
+              aria-labelledby="heading<%= orden.nrocompro %>"
+              data-bs-parent="#accordionOrdenes"
+            >
+              <div class="accordion-body">
+                <!-- Detalle Orden -->
+                <div class="card prioridad<%= orden.prioridad %>">
+                  <div class="card-header"><%= orden.nombre %></div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-light">
+                      Fecha de ingreso: <%= orden.ingresado %>
+                    </li>
+                    <li class="list-group-item bg-light">
+                      Codigo Cliente: <%= orden.codigo %>
+                    </li>
+                    <li class="list-group-item bg-light">
+                      Telefono: <%= orden.telefono %>
+                    </li>
+                    <li class="list-group-item bg-light">
+                      Articulo: <%= orden.descart %>
+                    </li>
+                    <li class="list-group-item bg-light">
+                      Falla: <%= orden.falla %>
+                    </li>
+                    <li class="list-group-item bg-light">
+                      Accesorios: <%= orden.accesorios %>
+                    </li>
+                    <li class="list-group-item bg-light">
+                      Diagnostico: <%= orden.diagnostico %>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <%- include("./partials/js.ejs") %>
+  </body>
+</html>

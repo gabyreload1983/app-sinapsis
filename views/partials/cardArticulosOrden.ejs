@@ -1,0 +1,50 @@
+<div class="card">
+  <div class="card-header prioridad<%= orden.prioridad %>">
+    <h2>Articulos Orden</h2>
+    <h3>Precios Finales</h3>
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Articulo</th>
+          <th scope="col">Descripcion</th>
+          <th scope="col">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% articulos.forEach(articulo => { %>
+        <tr>
+          <td><%= articulo.codart %></td>
+          <td><%= articulo.descart %></td>
+          <td>$<%= articulo.lista1 %></td>
+          <% }) %>
+        </tr>
+        <tr>
+          <td>.ST</td>
+          <td>Costo mano de Obra</td>
+          <td>$<%= orden.costo %></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <td colspan="2">Total</td>
+        <td>$<%= orden.total %></td>
+      </tfoot>
+    </table>
+
+    <!--   <ul class="list-group list-group-flush">
+      <% articulos.forEach(articulo => { %>
+      <li class="list-group-item bg-light">
+        <%= articulo.codart %> - <%= articulo.descart %> - $<%= articulo.lista1
+        %>
+      </li>
+
+      <% }) %>
+      <li class="list-group-item bg-light">
+        Costo mano de Obra $<%= orden.costo %>
+      </li>
+
+      <li class="list-group-item bg-light">Total $<%= orden.total %></li>
+    </ul> -->
+  </div>
+</div>

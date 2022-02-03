@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <!-- NAV -->
+    <%- include("./partials/navbar.ejs") %>
+    <div class="container-fluid pt-5 min-vh-100" id="main">
+      <div class="container pt-4" id="content">
+        <!-- Contenido -->
+
+        <div class="container bg-light">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Posicion</th>
+                <th scope="col">Orden</th>
+                <th scope="col">Prioridad</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Tecnico</th>
+                <th scope="col">Detalles</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% ordenes.forEach(orden=>{ %>
+
+              <tr class="prioridad<%= orden.prioridad %>">
+                <td>#<%= %></td>
+                <td><%= orden.nrocompro%></td>
+                <td><%= orden.prioridad%></td>
+                <td><%= orden.nombre%></td>
+                <td><%= orden.tecnico%></td>
+                <td>
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#<%= orden.nrocompro%>"
+                    aria-controls="<%= orden.nrocompro%>"
+                  >
+                    Detalles
+                  </button>
+
+                  <div
+                    class="offcanvas offcanvas-start"
+                    data-bs-scroll="true"
+                    tabindex="-1"
+                    id="<%= orden.nrocompro%>"
+                    aria-labelledby="<%= orden.nrocompro%>Label"
+                  >
+                    <div class="offcanvas-header">
+                      <h5
+                        class="offcanvas-title"
+                        id="<%= orden.nrocompro%>Label"
+                      >
+                        <%= orden.cliente%>
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close text-reset"
+                        data-bs-dismiss="offcanvas"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="offcanvas-body">
+                      <!-- Card Orden -->
+                      <%- include("./partials/cardOrden.ejs") %>
+                      <div class="d-flex mt-3 justify-content-end">
+                        <button class="btn btn-success d-none me-2">
+                          Guardar
+                        </button>
+                        <button class="btn btn-danger d-none">Cancelar</button>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <%}) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <%- include("./partials/js.ejs") %>
+  </body>
+</html>

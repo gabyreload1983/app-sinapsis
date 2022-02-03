@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <!-- NAV -->
+    <%- include("./partials/navbar.ejs") %>
+    <div class="container-fluid pt-5 min-vh-100" id="main">
+      <div class="container pt-4" id="content">
+        <!-- Contenido -->
+
+        <!-- Cabecera -->
+        <div class="container mb-3 p-0">
+          <div class="row justify-content-center">
+            <div class="col-12 col-lg-3">
+              <ul class="list-group">
+                <li
+                  class="list-group-item active d-flex justify-content-between align-items-center"
+                >
+                  Sector: <%= titulo %>
+                  <span class="badge bg-primary rounded-pill"></span>
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  Total Ordenes
+                  <span class="badge bg-primary rounded-pill"
+                    ><%= ordenes.length %></span
+                  >
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  Reparaciones x dia
+                  <span class="badge bg-primary rounded-pill"
+                    ><%= reparacionesPorDia %></span
+                  >
+                </li>
+                <li
+                  class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  Demora
+                  <span class="badge bg-primary rounded-pill"
+                    ><%= demora %></span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla con ordenes -->
+        <div class="container bg-light p-0">
+          <table class="table">
+            <thead>
+              <tr class="table-primary">
+                <th>Posicion</th>
+                <th>Orden</th>
+                <th class="d-none d-lg-table-cell">Cliente</th>
+                <th class="d-none d-lg-table-cell">Prioridad</th>
+                <th class="d-none d-lg-table-cell">Tecnico</th>
+                <th>Detalles</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% ordenes.forEach(orden=>{ %>
+
+              <tr class="prioridad<%= orden.prioridad %>">
+                <td>#<%= fila += 1 %></td>
+                <td><%= orden.nrocompro%></td>
+                <td class="d-none d-lg-table-cell"><%= orden.nombre%></td>
+                <td class="d-none d-lg-table-cell"><%= orden.prioridad%></td>
+                <td class="d-none d-lg-table-cell"><%= orden.tecnico%></td>
+                <td>
+                  <!-- Button trigger modal -->
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark btn-small"
+                    data-bs-toggle="modal"
+                    data-bs-target="#detalle<%= orden.nrocompro%>"
+                  >
+                    Detalles
+                  </button>
+
+                  <!-- Modal -->
+                  <div
+                    class="modal fade"
+                    id="detalle<%= orden.nrocompro%>"
+                    tabindex="-1"
+                    aria-labelledby="detalle<%= orden.nrocompro%>Label"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5
+                            class="modal-title prioridad<%= orden.prioridad %>"
+                            id="<%= orden.nrocompro%>Label"
+                          >
+                            Estado: <%= orden.estado %>
+                          </h5>
+                          <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                          ></button>
+                        </div>
+                        <div class="modal-body">
+                          <!-- Card Orden -->
+                          <div class="card">
+                            <div
+                              class="card-header prioridad<%= orden.prioridad %>"
+                            >
+                              <h2><%= orden.codigo %> - <%= orden.nombre %></h2>
+                            </div>
+                            <div class="card-body">
+                              <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-light">
+                                  Orden: <%= orden.nrocompro %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Producto: <%= orden.descart %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Falla:
+                                  <div class="form-diagnostico">
+                                    <textarea
+                                      class="form-control"
+                                      id="falla_<%= orden.nrocompro %>"
+                                      style="height: 100px"
+                                      disabled
+                                    >
+<%= orden.falla %>
+                                    </textarea>
+                                  </div>
+                                </li>
+                                <li class="list-group-item">
+                                  Diagnostico: <%= orden.diag %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Diagnostico tecnico:
+                                  <div class="form-diagnostico">
+                                    <textarea
+                                      class="form-control"
+                                      id="textarea_<%= orden.nrocompro %>"
+                                      style="height: 100px"
+                                    >
+<%= orden.diagnostico %></textarea
+                                    >
+                                  </div>
+                                </li>
+                                <li
+                                  class="list-group-item <%= orden.bgDescription %>"
+                                >
+                                  Ubicacion: <%= orden.ubicacion %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Fecha de ingreso: <%= orden.ingresado %>
+                                </li>
+
+                                <li class="list-group-item bg-light">
+                                  Telefono:
+                                  <a
+                                    target="_blank"
+                                    href="https://api.whatsapp.com/send?phone=+549<%= orden.telefono %>&text=Hola, nos comunicamos de Sinapsis SRL..."
+                                    ><%= orden.telefono %></a
+                                  >
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Sector: <%= orden.codiart %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Accesorios: <%= orden.accesorios %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Prioridad: <%= orden.prioridad %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Tecnico: <%= orden.tecnico %>
+                                </li>
+                                <li class="list-group-item bg-light">
+                                  Costo: $<%= orden.costo %>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                          >
+                            Close
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <%}) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <%- include("./partials/js.ejs") %>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <!-- NAV -->
+    <%- include("./partials/navbar.ejs") %>
+    <div class="container-fluid pt-5 min-vh-100" id="main">
+      <div class="container pt-4" id="content">
+        <!-- Contenido -->
+        <div class="row">
+          <!-- Card Orden -->
+          <% if(orden.length !== 0) { %>
+          <div class="col-md-6 my-3">
+            <!-- Card Orden -->
+            <%- include("./partials/cardOrden.ejs") %>
+          </div>
+          <div class="col-md-6 my-3">
+            <!-- Articulos que contiene Orden -->
+            <%- include("./partials/cardArticulosOrden.ejs") %>
+          </div>
+          <% } else { %>
+          <div class="row justify-content-center">
+            <div class="col-12 col-lg-4">
+              <div class="alert alert-danger text-center" role="alert">
+                NO EXISTE ORDEN!!!
+              </div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <%- include("./partials/js.ejs") %>
+  </body>
+</html>

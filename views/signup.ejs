@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <!-- NAV -->
+    <%- include("./partials/navbar.ejs") %>
+    <div class="container-fluid pt-5 min-vh-100" id="main">
+      <div class="container pt-4" id="content">
+        <!-- Contenido -->
+        <div class="row mt-5 justify-content-center align-items-center">
+          <div class="col-12 col-lg-4">
+            <form class="form_sigin bg-white border rounded border-primary p-3">
+              <h2>Sign in</h2>
+              <!-- email -->
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  required
+                />
+                <div class="email error text-danger mt-2"></div>
+              </div>
+              <!-- codigo tecnico -->
+              <div class="mb-3">
+                <label for="codigo_tecnico" class="form-label"
+                  >Codigo tecnico</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="codigo_tecnico"
+                  name="codigo_tecnico"
+                  required
+                />
+                <div class="codigo_tecnico error text-danger mt-2"></div>
+              </div>
+
+              <!-- password -->
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  required
+                />
+                <div class="password error text-danger mt-2"></div>
+              </div>
+              <button class="btn btn-primary" id="btnForm">Sign in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <%- include("./partials/js.ejs") %>
+    <script src="/js/signup.js"></script>
+  </body>
+</html>
