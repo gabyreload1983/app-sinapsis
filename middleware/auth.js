@@ -36,14 +36,14 @@ const checkUser = (req, res, next) => {
         next();
       } else {
         let user = await User.findById(decodedToken.id);
-        logger.info(
-          `JWT valida  - Tecnico: ${user.codigo_tecnico} - IP: ${host}`
-        );
+        req.body.codigo_tecnico = user.codigo_tecnico;
+        req.body.host = host;
         res.locals.user = user;
         next();
       }
     });
   } else {
+    logger.error(`Host: ${host} - sin JWT`);
     res.locals.user = null;
     next();
   }
