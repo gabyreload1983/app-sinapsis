@@ -1,5 +1,5 @@
-const connection = require("../conexion/dbUrbano");
-const connectionTickets = require("../conexion/dbTickets");
+const connection_urbano = require("../conexion/dbUrbano");
+const connection_tickets = require("../conexion/dbTickets");
 const constantes = require("../constantes/constantes");
 const moment = require("moment");
 const logger = require("../logger/logger");
@@ -12,9 +12,9 @@ exports.index = (req, res) => {
 //Funciones
 
 //Querys MYSQL URBANO
-function getFromUrbano(querySelect) {
+function get_from_urbano(querySelect) {
   return new Promise((resolve, reject) => {
-    connection.query(querySelect, (error, result) => {
+    connection_urbano.query(querySelect, (error, result) => {
       if (error) {
         reject(new Error(error));
       } else {
@@ -25,9 +25,9 @@ function getFromUrbano(querySelect) {
 }
 
 //Querys MYSQL Tickets
-function getFromTickets(querySelect) {
+function get_from_tickets(querySelect) {
   return new Promise((resolve, reject) => {
-    connectionTickets.query(querySelect, (error, result) => {
+    connection_tickets.query(querySelect, (error, result) => {
       if (error) {
         reject(new Error(error));
       } else {
@@ -38,7 +38,7 @@ function getFromTickets(querySelect) {
 }
 
 //Formatear ordenes
-function getOrdenesFormateadas(arrayOrdenes) {
+function get_ordenes_formateadas(arrayOrdenes) {
   return new Promise((resolve, reject) => {
     arrayOrdenes.forEach((orden) => {
       orden.nrocompro = orden.nrocompro.slice(10);
@@ -55,20 +55,20 @@ function getOrdenesFormateadas(arrayOrdenes) {
   });
 }
 
-function getReparacionesPorDia() {
+function get_reparaciones_por_dia() {
   const query = `SELECT opcional FROM trabajos WHERE nrocompro = "ORX001100012023"`;
   return new Promise((resolve, reject) => {
-    connection.query(query, (error, reparacionesPorDia) => {
+    connection_urbano.query(query, (error, reparaciones_por_dia) => {
       if (error) {
         reject(new Error(error));
       } else {
-        resolve(reparacionesPorDia);
+        resolve(reparaciones_por_dia);
       }
     });
   });
 }
 
-function agregarCodigoTecnico(arrayTickets) {
+function agregar_codigo_tecnico(arrayTickets) {
   arrayTickets.forEach((ticket) => {
     let codigo = constantes.tecnicos.find(
       (tecnico) => tecnico.nombre === ticket.nombre
@@ -79,36 +79,36 @@ function agregarCodigoTecnico(arrayTickets) {
 }
 
 //Obtener Orden de reparacion y sus articulos con precios
-exports.ordenDeReparacion = async (req, res) => {
+exports.orden_de_reparacion = async (req, res) => {
   try {
     const codigo_tecnico = req.body.codigo_tecnico;
     const host = req.body.host;
     logger.info(
-      `ordenDeReparacion - Usuario: ${codigo_tecnico} - Host: ${host}`
+      `orden_de_reparacion - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
-    const numberOrder = req.query.orden;
-    const queryOrden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011000${numberOrder}"`;
-    const queryCotizacionDolar = `SELECT * FROM cotiza  WHERE codigo =  "BD"`;
-    const queryArticulosEnOrden = `SELECT * FROM trrenglo INNER JOIN articulo ON trrenglo.codart= articulo.codigo
-                                     WHERE trrenglo.nrocompro LIKE  "ORX0011000${numberOrder}"`;
+    const number_order = req.query.orden;
+    const query_orden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011000${number_order}"`;
+    const query_cotizacion_dolar = `SELECT * FROM cotiza  WHERE codigo =  "BD"`;
+    const query_articulos_en_orden = `SELECT * FROM trrenglo INNER JOIN articulo ON trrenglo.codart= articulo.codigo
+                                     WHERE trrenglo.nrocompro LIKE  "ORX0011000${number_order}"`;
     //Buscar Orden de trabajo
-    let orden = await getFromUrbano(queryOrden);
+    let orden = await get_from_urbano(query_orden);
     if (!orden[0]) {
-      res.render("ordenDeReparacion", {
+      res.render("orden_de_reparacion", {
         titulo: "Orden De Reparacion",
         orden: [],
         articulos: [],
       });
     } else {
       //Formatear Ordenes
-      orden = await getOrdenesFormateadas(orden);
+      orden = await get_ordenes_formateadas(orden);
 
       //Buscar articulos en orden
-      const articulos = await getFromUrbano(queryArticulosEnOrden);
+      const articulos = await get_from_urbano(query_articulos_en_orden);
       if (articulos[0]) {
         //Obtener Cotizacion Dolar
-        const cotizacionDolar = await getFromUrbano(queryCotizacionDolar);
+        const cotizacionDolar = await get_from_urbano(query_cotizacion_dolar);
 
         //Precio de cada articulo
         articulos.forEach((articulo) => {
@@ -121,14 +121,14 @@ exports.ordenDeReparacion = async (req, res) => {
           orden[0].total += articulo.lista1;
         });
         //Orden con articulos
-        res.render("ordenDeReparacion", {
+        res.render("orden_de_reparacion", {
           titulo: "Orden De Reparacion",
           orden: orden[0],
           articulos,
         });
       } else {
         //Orden sin articulos
-        res.render("ordenDeReparacion", {
+        res.render("orden_de_reparacion", {
           titulo: "Orden De Reparacion",
           orden: orden[0],
           articulos: [],
@@ -137,78 +137,78 @@ exports.ordenDeReparacion = async (req, res) => {
     }
   } catch (error) {
     logger.error(
-      `ordenDeReparacion - Usuario: ${codigo_tecnico} - Error: ${error.message} - Host: ${host}`
+      `orden_de_reparacion - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
 
 //Ordenes Pendientes del taller segun sector
-exports.ordenesPendientes = async (req, res) => {
+exports.ordenes_pendientes = async (req, res) => {
   try {
     const sector = req.params.sector;
     const codigo_tecnico = req.body.codigo_tecnico;
     const host = req.body.host;
     logger.info(
-      `ordenesPendientes - Sector: ${sector} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      `ordenes_pendientes - Sector: ${sector} - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
-    const queryOrdenesPendientes = `SELECT * FROM trabajos 
+    const query_ordenes_pendientes = `SELECT * FROM trabajos 
                     WHERE  codiart = ".${sector}" AND estado = 21 AND codigo != "ANULADO"
                     ORDER BY prioridad DESC`;
-    let ordenesPendientes = await getFromUrbano(queryOrdenesPendientes);
-    ordenesPendientes = await getOrdenesFormateadas(ordenesPendientes);
+    let ordenes_pendientes = await get_from_urbano(query_ordenes_pendientes);
+    ordenes_pendientes = await get_ordenes_formateadas(ordenes_pendientes);
 
     //Reparaciones por dia
-    let reparacionesPorDia = await getReparacionesPorDia();
-    reparacionesPorDia = Number(reparacionesPorDia[0].opcional);
+    let reparaciones_por_dia = await get_reparaciones_por_dia();
+    reparaciones_por_dia = Number(reparaciones_por_dia[0].opcional);
 
     //Demora en dias del sector
-    const demora = Math.trunc(ordenesPendientes.length / reparacionesPorDia);
+    const demora = Math.trunc(ordenes_pendientes.length / reparaciones_por_dia);
 
-    res.render("ordenesModal", {
-      ordenes: ordenesPendientes,
+    res.render("ordenes_tabla", {
+      ordenes: ordenes_pendientes,
       titulo: sector,
-      reparacionesPorDia,
+      reparaciones_por_dia,
       demora,
       fila: 0,
     });
   } catch (error) {
     logger.error(
-      `ordenesPendientes - Usuario: ${codigo_tecnico} - Error: ${error.message} - Host: ${host}`
+      `ordenes_pendientes - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
 
 //Ordenes en proceso
-exports.ordenesEnProceso = async (req, res) => {
+exports.ordenes_en_proceso = async (req, res) => {
   try {
     const codigo_tecnico = req.body.codigo_tecnico;
     const host = req.body.host;
     logger.info(
-      `ordenesEnProceso - Usuario: ${codigo_tecnico} - Host: ${host}`
+      `ordenes_en_proceso - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
-    const queryOrdenesEnProceso = `SELECT * FROM trabajos WHERE estado = 22 ORDER BY tecnico`;
-    let ordenesEnProceso = await getFromUrbano(queryOrdenesEnProceso);
-    ordenesEnProceso = await getOrdenesFormateadas(ordenesEnProceso);
+    const query_ordenes_en_proceso = `SELECT * FROM trabajos WHERE estado = 22 ORDER BY tecnico`;
+    let ordenes_en_proceso = await get_from_urbano(query_ordenes_en_proceso);
+    ordenes_en_proceso = await get_ordenes_formateadas(ordenes_en_proceso);
 
     //Reparaciones por dia
-    let reparacionesPorDia = await getReparacionesPorDia();
-    reparacionesPorDia = Number(reparacionesPorDia[0].opcional);
+    let reparaciones_por_dia = await get_reparaciones_por_dia();
+    reparaciones_por_dia = Number(reparaciones_por_dia[0].opcional);
 
     //Demora en dias del sector
-    const demora = Math.trunc(ordenesEnProceso.length / reparacionesPorDia);
+    const demora = Math.trunc(ordenes_en_proceso.length / reparaciones_por_dia);
 
-    res.render("ordenesModal", {
-      ordenes: ordenesEnProceso,
+    res.render("ordenes_tabla", {
+      ordenes: ordenes_en_proceso,
       titulo: "En Proceso",
-      reparacionesPorDia,
+      reparaciones_por_dia,
       demora,
       fila: 0,
     });
   } catch (error) {
     logger.error(
-      `ordenesEnProceso - Usuario: ${codigo_tecnico} - Error: ${error.message} - Host: ${host}`
+      `ordenes_en_proceso - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -219,28 +219,28 @@ class Estadisticas {
   constructor(
     codigo,
     nombre,
-    ordenesTerminadas = 0,
-    ordenesSinReparacion = 0,
-    ordenesPcArmadas = 0,
-    ticketsCerrados = 0,
+    ordenes_terminadas = 0,
+    ordenes_sin_reparacion = 0,
+    ordenes_pc_armadas = 0,
+    tickets_cerrados = 0,
     total = 0
   ) {
     this.codigo = codigo;
     this.nombre = nombre;
-    this.ordenesTerminadas = ordenesTerminadas;
-    this.ordenesSinReparacion = ordenesSinReparacion;
-    this.ordenesPcArmadas = ordenesPcArmadas;
-    this.ticketsCerrados = ticketsCerrados;
+    this.ordenes_terminadas = ordenes_terminadas;
+    this.ordenes_sin_reparacion = ordenes_sin_reparacion;
+    this.ordenes_pc_armadas = ordenes_pc_armadas;
+    this.tickets_cerrados = tickets_cerrados;
     this.total = total;
   }
 }
 
-exports.estadisticasTecnicos = async (req, res) => {
+exports.estadisticas_tecnicos = async (req, res) => {
   try {
     const codigo_tecnico = req.body.codigo_tecnico;
     const host = req.body.host;
     logger.info(
-      `estadisticasTecnicos - Usuario: ${codigo_tecnico} - Host: ${host}`
+      `estadisticas_tecnicos - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
     if (req.query.desde && req.query.hasta) {
@@ -250,26 +250,26 @@ exports.estadisticasTecnicos = async (req, res) => {
       desde = req.query.desde + " 00:00:00";
       hasta = req.query.hasta + " 23:59:59";
 
-      const queryOrdenesTerminadas = `SELECT tecnico as codigo, count(*) as ordenesTerminadas
+      const query_ordenes_terminadas = `SELECT tecnico as codigo, count(*) as ordenes_terminadas
                                       FROM trabajos WHERE 
                                       diagnosticado BETWEEN  "${desde}" AND "${hasta}" AND 
                                       codigo != "ANULADO" AND 
                                       estado= 23 
                                       GROUP BY tecnico`;
-      const queryTicketsCerrados = `SELECT UPPER(username) AS nombre, count(*) as ticketsCerrados
+      const query_tickets_cerrados = `SELECT UPPER(username) AS nombre, count(*) as tickets_cerrados
                                       FROM ost_osticket.ost_ticket
                                       JOIN ost_staff
                                       USING (staff_id)
                                       WHERE closed BETWEEN "${desde}" AND "${hasta}" AND (status_id = 3 OR status_id= 2)               
                                       GROUP BY staff_id;`;
-      const queryOrdenesSinReparacion = `SELECT tecnico as codigo, count(*) as ordenesSinReparacion
+      const query_ordenes_sin_reparacion = `SELECT tecnico as codigo, count(*) as ordenes_sin_reparacion
                                       FROM trabajos WHERE 
                                       diagnosticado BETWEEN  "${desde}" AND "${hasta}" AND 
                                       codigo != "ANULADO" AND 
                                       estado= 23 AND 
                                       diag=23
                                       GROUP BY tecnico`;
-      const queryPcArmadas = `SELECT tecnico as codigo, count(*) as ordenesPcArmadas
+      const query_ordenes_pc_armadas = `SELECT tecnico as codigo, count(*) as ordenes_pc_armadas
                                       FROM trabajos WHERE 
                                       diagnosticado BETWEEN  "${desde}" AND "${hasta}" AND 
                                       codigo != "ANULADO" AND 
@@ -283,27 +283,29 @@ exports.estadisticasTecnicos = async (req, res) => {
         estadisticas.push(tecnico);
       });
 
-      function agregarEstadisticas(arrayEstadisticas, addKey) {
-        arrayEstadisticas.forEach((estadisticaTecnico) => {
+      function agregarEstadisticas(array_estadisticas, addKey) {
+        array_estadisticas.forEach((estadistica_tecnico) => {
           estadisticas.forEach((estadistica) => {
-            if (estadistica.codigo === estadisticaTecnico.codigo)
-              estadistica[addKey] = estadisticaTecnico[addKey];
+            if (estadistica.codigo === estadistica_tecnico.codigo)
+              estadistica[addKey] = estadistica_tecnico[addKey];
           });
         });
       }
 
       //Ordenes Reparadas
-      const ordenesTerminadas = await getFromUrbano(queryOrdenesTerminadas);
-      agregarEstadisticas(ordenesTerminadas, "ordenesTerminadas");
+      const ordenes_terminadas = await get_from_urbano(
+        query_ordenes_terminadas
+      );
+      agregarEstadisticas(ordenes_terminadas, "ordenes_terminadas");
 
       //Tickets Cerrados
-      let ticketsCerrados = await getFromTickets(queryTicketsCerrados);
-      ticketsCerrados = agregarCodigoTecnico(ticketsCerrados);
-      agregarEstadisticas(ticketsCerrados, "ticketsCerrados");
+      let tickets_cerrados = await get_from_tickets(query_tickets_cerrados);
+      tickets_cerrados = agregar_codigo_tecnico(tickets_cerrados);
+      agregarEstadisticas(tickets_cerrados, "tickets_cerrados");
 
       //Calcular total reparaciones
       estadisticas.forEach((tecnico) => {
-        tecnico.total = tecnico.ordenesTerminadas + tecnico.ticketsCerrados;
+        tecnico.total = tecnico.ordenes_terminadas + tecnico.tickets_cerrados;
       });
 
       //Filtrar tecnicos sin reparaciones
@@ -315,14 +317,16 @@ exports.estadisticasTecnicos = async (req, res) => {
       });
 
       //Ordenes sin Reparacion
-      const ordenesSinReparacion = await getFromUrbano(
-        queryOrdenesSinReparacion
+      const ordenes_sin_reparacion = await get_from_urbano(
+        query_ordenes_sin_reparacion
       );
-      agregarEstadisticas(ordenesSinReparacion, "ordenesSinReparacion");
+      agregarEstadisticas(ordenes_sin_reparacion, "ordenes_sin_reparacion");
 
       //Ordenes PC Armadas
-      const ordenesPcArmadas = await getFromUrbano(queryPcArmadas);
-      agregarEstadisticas(ordenesPcArmadas, "ordenesPcArmadas");
+      const ordenes_pc_armadas = await get_from_urbano(
+        query_ordenes_pc_armadas
+      );
+      agregarEstadisticas(ordenes_pc_armadas, "ordenes_pc_armadas");
 
       //se formatea para enviar a la vista
       desde = moment(desde).format("YYYY-MM-DD");
@@ -346,7 +350,7 @@ exports.estadisticasTecnicos = async (req, res) => {
     }
   } catch (error) {
     logger.error(
-      `estadisticasTecnicos - Usuario: ${codigo_tecnico} - Error: ${error.message} - Host: ${host}`
+      `estadisticas_tecnicos - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -355,52 +359,52 @@ exports.estadisticasTecnicos = async (req, res) => {
 const form = {
   mensaje: "",
   error: "",
-  ordenReparacion: "",
-  codigoArticulo: "",
-  numeroSerie: "",
+  orden_reparacion: "",
+  codigo_articulo: "",
+  numero_serie: "",
   orden: "",
   articulo: "",
   tecnicos: constantes.tecnicos,
 };
 
-exports.ingresarArticuloOrdenGet = async (req, res) => {
+exports.ingresar_articulo_orden_get = async (req, res) => {
   try {
     const codigo_tecnico = req.body.codigo_tecnico;
     const host = req.body.host;
     logger.info(
-      `ingresarArticuloOrdenGet - Usuario: ${codigo_tecnico} - Host: ${host}`
+      `ingresar_articulo_orden_get - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
     form.mensaje = "GET";
     form.error = "";
-    form.ordenReparacion = "";
-    form.codigoArticulo = "";
-    form.numeroSerie = "";
+    form.orden_reparacion = "";
+    form.codigo_articulo = "";
+    form.numero_serie = "";
     form.orden = "";
     form.articulo = "";
-    res.render("ingresarArticuloOrden", {
+    res.render("ingresar_articulo_orden", {
       usuario: { nombre: codigo_tecnico },
       titulo: "Ingresar Articulo",
       form: form,
     });
   } catch (error) {
     logger.error(
-      `ingresarArticuloOrdenGet - Usuario: ${codigo_tecnico} - Error: ${error.message} - Host: ${host}`
+      `ingresar_articulo_orden_get - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
 
-exports.ingresarArticuloOrdenBuscar = async (req, res) => {
+exports.ingresar_articulo_orden_buscar = async (req, res) => {
   try {
     const host = req.body.host;
     const codigo_tecnico = req.body.codigo_tecnico;
     const tecnico = req.body.tecnico;
-    const orden_reparacion = req.body.ordenReparacion;
-    const codigo_articulo = req.body.codigoArticulo;
-    const numero_serie = req.body.numeroSerie;
+    const orden_reparacion = req.body.orden_reparacion;
+    const codigo_articulo = req.body.codigo_articulo;
+    const numero_serie = req.body.numero_serie;
 
     logger.info(
-      `ingresarArticuloOrdenBuscar - Usuario: ${codigo_tecnico} - Host: ${host} 
+      `ingresar_articulo_orden_buscar - Usuario: ${codigo_tecnico} - Host: ${host} 
       Tecnico: ${tecnico}
       Orden: ${orden_reparacion}
       Codigo Articulo: ${codigo_articulo}
@@ -408,17 +412,17 @@ exports.ingresarArticuloOrdenBuscar = async (req, res) => {
     );
 
     //Querys
-    queryBuscarOrden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011%${orden_reparacion}"`;
-    queryBuscarArticulo = `SELECT * FROM articulo WHERE codigo = ${codigo_articulo}`;
-    queryBuscarSerie = `SELECT * FROM serie2 WHERE serie = "${numero_serie}"`;
+    const query_buscar_orden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011%${orden_reparacion}"`;
+    const query_buscar_articulo = `SELECT * FROM articulo WHERE codigo = ${codigo_articulo}`;
+    const query_buscar_serie = `SELECT * FROM serie2 WHERE serie = "${numero_serie}"`;
 
     form.mensaje = "";
     form.error = "";
-    form.ordenReparacion = orden_reparacion;
-    form.codigoArticulo = codigo_articulo;
-    form.numeroSerie = numero_serie;
+    form.orden_reparacion = orden_reparacion;
+    form.codigo_articulo = codigo_articulo;
+    form.numero_serie = numero_serie;
 
-    let orden = await getFromUrbano(queryBuscarOrden);
+    let orden = await get_from_urbano(query_buscar_orden);
     if (orden.length === 0) {
       form.error = "No existe numero de orden!!!";
       form.mensaje = "";
@@ -431,7 +435,7 @@ exports.ingresarArticuloOrdenBuscar = async (req, res) => {
         form: form,
       });
     } else {
-      let articulo = await getFromUrbano(queryBuscarArticulo);
+      let articulo = await get_from_urbano(query_buscar_articulo);
       if (articulo.length === 0) {
         form.error = "No existe codigo de articulo!!!";
         form.mensaje = "";
@@ -447,9 +451,9 @@ exports.ingresarArticuloOrdenBuscar = async (req, res) => {
         if (articulo[0].trabaserie === "N") {
           form.mensaje = "Se ingreso articulo. Articulo no necesita serie.";
           form.error = "";
-          form.ordenReparacion = "";
-          form.codigoArticulo = "";
-          form.numeroSerie = "";
+          form.orden_reparacion = "";
+          form.codigo_articulo = "";
+          form.numero_serie = "";
           form.orden = orden[0];
           form.articulo = articulo[0];
 
@@ -459,7 +463,7 @@ exports.ingresarArticuloOrdenBuscar = async (req, res) => {
             form: form,
           });
         } else {
-          if (form.numeroSerie === "") {
+          if (form.numero_serie === "") {
             form.error = "Debe ingresar numero de serie";
             form.mensaje = "";
             form.orden = "";
@@ -471,13 +475,13 @@ exports.ingresarArticuloOrdenBuscar = async (req, res) => {
               form: form,
             });
           } else {
-            let articuloSerie = await getFromUrbano(queryBuscarSerie);
-            if (articuloSerie.length === 0) {
+            let articulo_serie = await get_from_urbano(query_buscar_serie);
+            if (articulo_serie.length === 0) {
               form.mensaje = "Se ingreso articulo!!! No se encontro serie";
               form.error = "";
-              form.ordenReparacion = "";
-              form.codigoArticulo = "";
-              form.numeroSerie = "";
+              form.orden_reparacion = "";
+              form.codigo_articulo = "";
+              form.numero_serie = "";
               form.orden = orden[0];
               form.articulo = articulo[0];
 
@@ -487,13 +491,13 @@ exports.ingresarArticuloOrdenBuscar = async (req, res) => {
                 form: form,
               });
             } else {
-              if (articuloSerie[0].codigo === form.codigoArticulo) {
+              if (articulo_serie[0].codigo === form.codigo_articulo) {
                 form.mensaje =
                   "Se ingreso articulo, Serie coincide con articulo";
                 form.error = "";
-                form.ordenReparacion = "";
-                form.codigoArticulo = "";
-                form.numeroSerie = "";
+                form.orden_reparacion = "";
+                form.codigo_articulo = "";
+                form.numero_serie = "";
                 form.orden = orden[0];
                 form.articulo = articulo[0];
 
@@ -521,33 +525,36 @@ exports.ingresarArticuloOrdenBuscar = async (req, res) => {
     }
   } catch (error) {
     logger.error(
-      `ingresarArticuloOrdenPost - Usuario: ${req.body.codigo_tecnico} - Error: ${error.message} - Host: ${req.body.host}`
+      `ingresar_articulo_orden_buscar - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
 
-exports.ingresarArticuloOrdenConfirmar = async (req, res) => {
+exports.ingresar_articulo_orden_confirmar = async (req, res) => {
   try {
     const host = req.body.host;
     const codigo_tecnico = req.body.codigo_tecnico;
     const tecnico = req.body.tecnico;
-    const orden_reparacion = req.body.ordenReparacion;
-    const codigo_articulo = req.body.codigoArticulo;
-    const numero_serie = req.body.numeroSerie;
-    queryBuscarOrden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011%${orden_reparacion}"`;
-    let orden = await getFromUrbano(queryBuscarOrden);
+    const orden_reparacion = req.body.orden_reparacion;
+    const codigo_articulo = req.body.codigo_articulo;
+    const numero_serie = req.body.numero_serie;
+    const query_buscar_orden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011%${orden_reparacion}"`;
+    let orden = await get_from_urbano(query_buscar_orden);
     const codigo_cliente = orden[0].cliente;
 
+    let now = new Date();
+    now = moment(now).format("YYYY-MM-DD HH:MM");
+
     logger.info(
-      `ingresarArticuloOrdenConfirmar - Usuario: ${codigo_tecnico} - Host: ${host} 
+      `ingresar_articulo_orden_confirmar - Usuario: ${codigo_tecnico} - Host: ${host} 
       Tecnico: ${tecnico}
       Orden: ${orden_reparacion}
       Codigo Articulo: ${codigo_articulo}
       Numero de Serie: ${numero_serie}`
     );
 
-    queryReservaArticulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${codigo_articulo}`;
-    queryIngresarArticuloOrden = `
+    const query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${codigo_articulo}`;
+    const query_ingresar_articulo_orden = `
         INSERT INTO trrenglo
         (serie, ingreso, cliente, operador, tecnico, codart, descart, nrocompro, pendiente)
         SELECT "${numero_serie}", NOW(), ${codigo_cliente}, "${codigo_tecnico}", "${tecnico}", ${codigo_articulo}, descrip, "ORX0011000${orden_reparacion}", 1 
@@ -559,11 +566,97 @@ exports.ingresarArticuloOrdenConfirmar = async (req, res) => {
         usuario: { nombre: codigo_tecnico },
         titulo: "Ingresar Articulo",
         confirmacion: "Articulo Ingresado",
+        date: now,
       });
     }, 2000);
   } catch (error) {
     logger.error(
-      `ingresarArticuloOrdenConfirmar - Usuario: ${req.body.codigo_tecnico} - Error: ${error.message} - Host: ${req.body.host}`
+      `ingresar_articulo_orden_confirmar - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+exports.buscar_articulo = async (req, res) => {
+  try {
+    const host = req.body.host;
+    const codigo_tecnico = req.body.codigo_tecnico;
+    const busqueda_articulo_descrip = req.body.busqueda_articulo_descrip;
+    const query_buscarArticulo_descrip = `SELECT articulo.codigo AS codigo, articulo.descrip AS descripcion, (stockd01 - reserd01) AS stock
+                                  FROM articulo 
+                                  INNER JOIN artstk01
+                                  ON articulo.codigo= artstk01.codigo
+                                  WHERE articulo.descrip LIKE "%${busqueda_articulo_descrip}%" AND (stockd01 - reserd01) > 0
+                                  ORDER BY articulo.descrip`;
+
+    logger.info(
+      `buscar_articulo - Usuario: ${codigo_tecnico} - Host: ${host} 
+      Busqueda: ${busqueda_articulo_descrip}`
+    );
+
+    const articulos = await get_from_urbano(query_buscarArticulo_descrip);
+
+    res.status(200).send({
+      titulo: "Buscar Articulo",
+      articulos: articulos,
+    });
+  } catch (error) {
+    logger.error(
+      `buscar_articulo - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+exports.buscar_articulo_serie = async (req, res) => {
+  try {
+    const host = req.body.host;
+    const codigo_tecnico = req.body.codigo_tecnico;
+    const numero_serie = req.body.numero_serie;
+    const query_buscar_articulo = `SELECT * FROM serie2 
+                                  INNER JOIN articulo ON serie2.codigo = articulo.codigo 
+                                  WHERE serie = "${numero_serie}" LIMIT 1`;
+
+    logger.info(
+      `buscar_articulo_serie - Usuario: ${codigo_tecnico} - Host: ${host} 
+      Busqueda serie: ${numero_serie}`
+    );
+
+    let articulo = await get_from_urbano(query_buscar_articulo);
+    if (articulo.length === 0) articulo = [{ codigo: "" }];
+    console.log(articulo);
+
+    res.status(200).send({
+      titulo: "Buscar Articulo",
+      articulo: articulo[0],
+    });
+  } catch (error) {
+    logger.error(
+      `buscar_articulo_serie - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+exports.buscar_orden_reparacion = async (req, res) => {
+  try {
+    const host = req.body.host;
+    const codigo_tecnico = req.body.codigo_tecnico;
+    const orden_reparacion = req.body.orden_reparacion;
+    const query_orden_reparacion = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011%${orden_reparacion}"`;
+
+    logger.info(
+      `buscar_orden_reparacion - Usuario: ${codigo_tecnico} - Host: ${host} 
+      Busqueda orden: ${orden_reparacion}`
+    );
+
+    let orden = await get_from_urbano(query_orden_reparacion);
+    if (orden.length === 0) orden = [{ nombre: "" }];
+
+    res.status(200).send({
+      titulo: "Buscar orden",
+      orden: orden[0],
+    });
+  } catch (error) {
+    logger.error(
+      `buscar_orden_reparacion - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
