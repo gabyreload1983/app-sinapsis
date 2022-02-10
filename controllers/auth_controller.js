@@ -4,7 +4,7 @@ const config = require("config");
 const logger = require("../logger/logger");
 
 //handle errors
-const handleErrors = (err, host) => {
+const handle_errors = (err, host) => {
   logger.error(`Host: ${host} - error: ${err.message} - code: ${err.code}`);
   let errors = { email: "", codigo_tecnico: "", password: "" };
 
@@ -72,7 +72,7 @@ module.exports.signup_post = async (req, res) => {
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(201).json({ user: user._id });
   } catch (err) {
-    const errors = handleErrors(err);
+    const errors = handle_errors(err);
     res.status(400).json({ errors });
   }
 };
@@ -87,7 +87,7 @@ module.exports.login_post = async (req, res) => {
     res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
     res.status(200).json({ user: user._id });
   } catch (err) {
-    const errors = handleErrors(err, host);
+    const errors = handle_errors(err, host);
     res.status(400).json({ errors });
   }
 };
