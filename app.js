@@ -1,8 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const indexRouter = require("./routes/indexRouter");
-const authRoutes = require("./routes/authRoutes");
-const urbanoRoutes = require("./routes/urbanoRoutes");
+const index_router = require("./routes/index_router");
+const auth_routes = require("./routes/auth_routes");
+const urbano_routes = require("./routes/urbano_routes");
 const cookieParser = require("cookie-parser");
 const { requireAuth, checkUser } = require("./middleware/auth");
 const config = require("config");
@@ -55,9 +55,9 @@ mongoose
 app.get("*", checkUser);
 app.post("*", checkUser);
 
-app.use("/", indexRouter);
-app.use(authRoutes);
-app.use("/urbano", requireAuth, urbanoRoutes);
+app.use("/", index_router);
+app.use(auth_routes);
+app.use("/urbano", requireAuth, urbano_routes);
 
 // Production
 // require("./prod")(app);
