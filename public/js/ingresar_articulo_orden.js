@@ -89,18 +89,24 @@ $(function () {
     btn_modificar.addClass("d-none");
     btn_cancelar.addClass("d-none");
     info.removeClass("d-none");
+    tecnico.removeAttr("disabled");
     $.ajax({
       url: "/urbano/taller/ingresar-articulo-orden-confirmar",
       type: "post",
       dataType: "json",
       data: form_articulo_orden.serialize(),
       success: function (data) {
-        if (data.confirmacion) {
+        if (!data.error) {
+          tecnico.attr("disabled", true);
           info.addClass("d-none");
           success.removeClass("d-none");
           btn_nueva_busqueda.removeClass("d-none");
           btn_imprimir.removeClass("d-none");
           print_date.append(` - Fecha: ${data.date}`);
+        } else {
+          error.append(
+            `Error reserva: ${data.reserva} - Error ingreso: ${data.ingreso}`
+          );
         }
       },
     });
