@@ -555,7 +555,6 @@ exports.ingresar_articulo_orden_confirmar = async (req, res) => {
     //Se reserva e ingresa articulo
     // const reserva = await get_from_urbano(query_reserva_articulo);
     // const ingreso = await get_from_urbano(query_ingresar_articulo_orden);
-
     logger.info(
       `ingresar_articulo_orden_confirmar - Usuario: ${codigo_tecnico} - Host: ${host} 
           Tecnico: ${tecnico}
@@ -564,10 +563,11 @@ exports.ingresar_articulo_orden_confirmar = async (req, res) => {
           Numero de Serie: ${numero_serie}`
     );
 
-    res.status(500).send({
+    res.status(200).send({
       usuario: { nombre: codigo_tecnico },
       titulo: "Ingresar Articulo",
       date: now,
+      transaccion: true,
       error: "",
     });
   } catch (error) {
@@ -575,9 +575,10 @@ exports.ingresar_articulo_orden_confirmar = async (req, res) => {
       `ingresar_articulo_orden_confirmar - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
     res.status(400).send({
-      usuario: { nombre: codigo_tecnico },
+      usuario: { nombre: req.body.codigo_tecnico },
       titulo: "Ingresar Articulo",
-      date: now,
+      date: "",
+      transaccion: false,
       error: `${error.message}`,
     });
   }
