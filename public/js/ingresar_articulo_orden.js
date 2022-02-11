@@ -96,7 +96,7 @@ $(function () {
       dataType: "json",
       data: form_articulo_orden.serialize(),
       success: function (data) {
-        if (!data.error) {
+        if (data.transaccion) {
           tecnico.attr("disabled", true);
           info.addClass("d-none");
           success.removeClass("d-none");
@@ -104,9 +104,7 @@ $(function () {
           btn_imprimir.removeClass("d-none");
           print_date.append(` - Fecha: ${data.date}`);
         } else {
-          error.append(
-            `Error reserva: ${data.reserva} - Error ingreso: ${data.ingreso}`
-          );
+          error.append(`Error ${data.error}`);
         }
       },
     });
