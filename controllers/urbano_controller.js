@@ -540,39 +540,46 @@ exports.ingresar_articulo_orden_confirmar = async (req, res) => {
     const numero_serie = req.body.numero_serie;
     const query_buscar_orden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011%${orden_reparacion}"`;
     let orden = await get_from_urbano(query_buscar_orden);
-    const codigo_cliente = orden[0].cliente;
+    const codigo_cliente = orden[0].codigo;
 
     let now = new Date();
     now = moment(now).format("YYYY-MM-DD HH:MM");
 
+    const query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${codigo_articulo}`;
+    const query_ingresar_articulo_orden = `INSERT INTO trrenglo
+    (serie, ingreso, cliente, operador, tecnico, codart, descart, nrocompro, pendiente)
+    SELECT "${numero_serie}", NOW(), ${codigo_cliente}, "${codigo_tecnico}", "${tecnico}", ${codigo_articulo}, descrip, "ORX0011000${orden_reparacion}", 1
+    FROM articulo
+    WHERE codigo = ${codigo_articulo}`;
+
+    //Se reserva e ingresa articulo
+    // const reserva = await get_from_urbano(query_reserva_articulo);
+    // const ingreso = await get_from_urbano(query_ingresar_articulo_orden);
+
     logger.info(
       `ingresar_articulo_orden_confirmar - Usuario: ${codigo_tecnico} - Host: ${host} 
-      Tecnico: ${tecnico}
-      Orden: ${orden_reparacion}
-      Codigo Articulo: ${codigo_articulo}
-      Numero de Serie: ${numero_serie}`
+          Tecnico: ${tecnico}
+          Orden: ${orden_reparacion}
+          Codigo Articulo: ${codigo_articulo}
+          Numero de Serie: ${numero_serie}`
     );
 
-    const query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${codigo_articulo}`;
-    const query_ingresar_articulo_orden = `
-        INSERT INTO trrenglo
-        (serie, ingreso, cliente, operador, tecnico, codart, descart, nrocompro, pendiente)
-        SELECT "${numero_serie}", NOW(), ${codigo_cliente}, "${codigo_tecnico}", "${tecnico}", ${codigo_articulo}, descrip, "ORX0011000${orden_reparacion}", 1 
-        FROM articulo
-        WHERE codigo = ${codigo_articulo}`;
-
-    setTimeout(() => {
-      res.status(200).send({
-        usuario: { nombre: codigo_tecnico },
-        titulo: "Ingresar Articulo",
-        confirmacion: "Articulo Ingresado",
-        date: now,
-      });
-    }, 2000);
+    res.status(500).send({
+      usuario: { nombre: codigo_tecnico },
+      titulo: "Ingresar Articulo",
+      date: now,
+      error: "",
+    });
   } catch (error) {
     logger.error(
       `ingresar_articulo_orden_confirmar - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(400).send({
+      usuario: { nombre: codigo_tecnico },
+      titulo: "Ingresar Articulo",
+      date: now,
+      error: `${error.message}`,
+    });
   }
 };
 
