@@ -36,7 +36,7 @@ const checkUser = (req, res, next) => {
         next();
       } else {
         let user = await User.findById(decodedToken.id);
-        req.body.codigo_tecnico = user.codigo_tecnico;
+        req.body.codigo_tecnico_log = user.codigo_tecnico;
         req.body.host = host;
         res.locals.user = user;
         next();

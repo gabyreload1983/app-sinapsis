@@ -81,7 +81,7 @@ function agregar_codigo_tecnico(arrayTickets) {
 //Obtener Orden de reparacion y sus articulos con precios
 exports.orden_de_reparacion = async (req, res) => {
   try {
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const host = req.body.host;
     logger.info(
       `orden_de_reparacion - Usuario: ${codigo_tecnico} - Host: ${host}`
@@ -137,7 +137,7 @@ exports.orden_de_reparacion = async (req, res) => {
     }
   } catch (error) {
     logger.error(
-      `orden_de_reparacion - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `orden_de_reparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -146,7 +146,7 @@ exports.orden_de_reparacion = async (req, res) => {
 exports.ordenes_pendientes = async (req, res) => {
   try {
     const sector = req.params.sector;
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const host = req.body.host;
     logger.info(
       `ordenes_pendientes - Sector: ${sector} - Usuario: ${codigo_tecnico} - Host: ${host}`
@@ -174,7 +174,7 @@ exports.ordenes_pendientes = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      `ordenes_pendientes - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `ordenes_pendientes - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -182,7 +182,7 @@ exports.ordenes_pendientes = async (req, res) => {
 //Ordenes en proceso
 exports.ordenes_en_proceso = async (req, res) => {
   try {
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const host = req.body.host;
     logger.info(
       `ordenes_en_proceso - Usuario: ${codigo_tecnico} - Host: ${host}`
@@ -208,7 +208,7 @@ exports.ordenes_en_proceso = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      `ordenes_en_proceso - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `ordenes_en_proceso - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -237,7 +237,7 @@ class Estadisticas {
 
 exports.estadisticas_tecnicos = async (req, res) => {
   try {
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const host = req.body.host;
     logger.info(
       `estadisticas_tecnicos - Usuario: ${codigo_tecnico} - Host: ${host}`
@@ -350,7 +350,7 @@ exports.estadisticas_tecnicos = async (req, res) => {
     }
   } catch (error) {
     logger.error(
-      `estadisticas_tecnicos - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `estadisticas_tecnicos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -369,7 +369,7 @@ const form = {
 
 exports.ingresar_articulo_orden_get = async (req, res) => {
   try {
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const host = req.body.host;
     logger.info(
       `ingresar_articulo_orden_get - Usuario: ${codigo_tecnico} - Host: ${host}`
@@ -389,7 +389,7 @@ exports.ingresar_articulo_orden_get = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      `ingresar_articulo_orden_get - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `ingresar_articulo_orden_get - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -397,7 +397,7 @@ exports.ingresar_articulo_orden_get = async (req, res) => {
 exports.ingresar_articulo_orden_buscar = async (req, res) => {
   try {
     const host = req.body.host;
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const tecnico = req.body.tecnico;
     const orden_reparacion = req.body.orden_reparacion;
     const codigo_articulo = req.body.codigo_articulo;
@@ -525,7 +525,7 @@ exports.ingresar_articulo_orden_buscar = async (req, res) => {
     }
   } catch (error) {
     logger.error(
-      `ingresar_articulo_orden_buscar - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `ingresar_articulo_orden_buscar - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -533,7 +533,7 @@ exports.ingresar_articulo_orden_buscar = async (req, res) => {
 exports.ingresar_articulo_orden_confirmar = async (req, res) => {
   try {
     const host = req.body.host;
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const tecnico = req.body.tecnico;
     const orden_reparacion = req.body.orden_reparacion;
     const codigo_articulo = req.body.codigo_articulo;
@@ -572,10 +572,10 @@ exports.ingresar_articulo_orden_confirmar = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      `ingresar_articulo_orden_confirmar - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `ingresar_articulo_orden_confirmar - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
     res.status(400).send({
-      usuario: { nombre: req.body.codigo_tecnico },
+      usuario: { nombre: req.body.codigo_tecnico_log },
       titulo: "Ingresar Articulo",
       date: "",
       transaccion: false,
@@ -587,7 +587,7 @@ exports.ingresar_articulo_orden_confirmar = async (req, res) => {
 exports.buscar_articulo = async (req, res) => {
   try {
     const host = req.body.host;
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const busqueda_articulo_descrip = req.body.busqueda_articulo_descrip;
     const query_buscarArticulo_descrip = `SELECT articulo.codigo AS codigo, articulo.descrip AS descripcion, (stockd01 - reserd01) AS stock
                                   FROM articulo 
@@ -609,7 +609,7 @@ exports.buscar_articulo = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      `buscar_articulo - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `buscar_articulo - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -617,7 +617,7 @@ exports.buscar_articulo = async (req, res) => {
 exports.buscar_articulo_serie = async (req, res) => {
   try {
     const host = req.body.host;
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const numero_serie = req.body.numero_serie;
     const query_buscar_articulo = `SELECT * FROM serie2 
                                   INNER JOIN articulo ON serie2.codigo = articulo.codigo 
@@ -638,7 +638,7 @@ exports.buscar_articulo_serie = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      `buscar_articulo_serie - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `buscar_articulo_serie - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -646,7 +646,7 @@ exports.buscar_articulo_serie = async (req, res) => {
 exports.buscar_orden_reparacion = async (req, res) => {
   try {
     const host = req.body.host;
-    const codigo_tecnico = req.body.codigo_tecnico;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
     const orden_reparacion = req.body.orden_reparacion;
     const query_orden_reparacion = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011%${orden_reparacion}"`;
 
@@ -664,7 +664,7 @@ exports.buscar_orden_reparacion = async (req, res) => {
     });
   } catch (error) {
     logger.error(
-      `buscar_orden_reparacion - Usuario: ${req.body.codigo_tecnico} - Host: ${req.body.host} - Error: ${error.message}`
+      `buscar_orden_reparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
