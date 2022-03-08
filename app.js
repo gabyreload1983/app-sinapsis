@@ -21,6 +21,7 @@ app.set("view engine", "ejs");
 
 //Environment
 logger.info(`NODE_ENV: ${process.env.NODE_ENV}`);
+logger.info(`EXPRESS: ${app.get("env")}`);
 
 //Se chequea variables de entorno
 if (!config.get("mongoDb")) {
