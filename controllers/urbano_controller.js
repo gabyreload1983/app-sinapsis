@@ -167,6 +167,7 @@ exports.ordenes_pendientes = async (req, res) => {
 
     res.render("ordenes_tabla", {
       ordenes: ordenes_pendientes,
+      tomar: true,
       titulo: sector,
       reparaciones_por_dia,
       demora,
@@ -201,6 +202,7 @@ exports.ordenes_en_proceso = async (req, res) => {
 
     res.render("ordenes_tabla", {
       ordenes: ordenes_en_proceso,
+      tomar: false,
       titulo: "En Proceso",
       reparaciones_por_dia,
       demora,
@@ -665,6 +667,38 @@ exports.buscar_orden_reparacion = async (req, res) => {
   } catch (error) {
     logger.error(
       `buscar_orden_reparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+exports.tomar_orden = async (req, res) => {
+  try {
+    const host = req.body.host;
+    const codigo_tecnico = req.body.codigo_tecnico_log.toUpperCase();
+    const orden_reparacion = req.body.orden_reparacion;
+    const query_tomar_orden = `UPDATE trabajos
+                                  SET estado=22, tecnico="${codigo_tecnico}"
+                                  WHERE nrocompro="ORX0011000${orden_reparacion}"`;
+
+    let orden_tomada = await get_from_urbano(query_tomar_orden);
+    if (orden_tomada.affectedRows) {
+      logger.info(
+        `tomar_orden - Usuario: ${codigo_tecnico} - Host: ${host} orden: ${orden_reparacion}`
+      );
+
+      res.status(200).send({
+        titulo: "Tomar orden",
+        transaccion: true,
+      });
+    } else {
+      res.status(200).send({
+        titulo: "Tomar orden",
+        transaccion: false,
+      });
+    }
+  } catch (error) {
+    logger.error(
+      `tomar_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
