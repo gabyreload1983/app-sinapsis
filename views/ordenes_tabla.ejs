@@ -58,8 +58,11 @@
                 <th>Orden</th>
                 <th class="d-none d-lg-table-cell">Cliente</th>
                 <th class="d-none d-lg-table-cell">Prioridad</th>
-                <th class="d-none d-lg-table-cell">Tecnico</th>
+                <th class="d-none d-lg-table-cell">Operador</th>
                 <th>Detalles</th>
+                <% if(tomar){ %>
+                <th></th>
+                <% } %>
               </tr>
             </thead>
             <tbody>
@@ -72,6 +75,7 @@
                 <td class="d-none d-lg-table-cell"><%= orden.nombre%></td>
                 <td class="d-none d-lg-table-cell"><%= orden.prioridad%></td>
                 <td class="d-none d-lg-table-cell"><%= orden.tecnico%></td>
+
                 <td>
                   <!-- Button trigger modal -->
                   <button
@@ -200,6 +204,16 @@
                     </div>
                   </div>
                 </td>
+                <% if(tomar){ %>
+                <td class="d-none d-lg-table-cell">
+                  <button
+                    class="btn btn-primary btn_tomar"
+                    id="<%= orden.nrocompro%>"
+                  >
+                    Tomar
+                  </button>
+                </td>
+                <% } %>
               </tr>
 
               <%}) %>
@@ -211,5 +225,6 @@
 
     <!-- JS -->
     <%- include("./partials/js.ejs") %>
+    <script src="/js/tomar_orden.js"></script>
   </body>
 </html>

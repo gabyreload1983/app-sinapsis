@@ -24,6 +24,7 @@ router.post(
 router.post("/taller/buscar-orden", urbano.buscar_orden_reparacion);
 router.post("/taller/buscar-articulo", urbano.buscar_articulo);
 router.post("/taller/buscar-articulo-serie", urbano.buscar_articulo_serie);
+router.post("/taller/tomar-orden", urbano.tomar_orden);
 
 router.get("/taller/:sector", urbano.ordenes_pendientes);
 
