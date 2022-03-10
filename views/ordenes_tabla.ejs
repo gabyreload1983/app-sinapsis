@@ -54,6 +54,7 @@
             <thead>
               <tr class="table-primary">
                 <th>Posicion</th>
+                <th class="d-none d-lg-table-cell">Ingreso</th>
                 <th>Orden</th>
                 <th class="d-none d-lg-table-cell">Cliente</th>
                 <th class="d-none d-lg-table-cell">Prioridad</th>
@@ -66,6 +67,7 @@
 
               <tr class="prioridad<%= orden.prioridad %>">
                 <td>#<%= fila += 1 %></td>
+                <td class="d-none d-lg-table-cell"><%= orden.ingresado%></td>
                 <td><%= orden.nrocompro%></td>
                 <td class="d-none d-lg-table-cell"><%= orden.nombre%></td>
                 <td class="d-none d-lg-table-cell"><%= orden.prioridad%></td>

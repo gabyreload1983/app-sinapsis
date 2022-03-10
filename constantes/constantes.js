@@ -8,7 +8,7 @@ exports.prioridades = {
   5: "5-GARANTIA REPARACION",
   6: "6",
   7: "7-GARANTIA COMPRA",
-  8: "8",
+  8: "8-BOXES",
   9: "9-ABONADOS",
   10: "10",
 };
