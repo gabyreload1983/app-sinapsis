@@ -702,3 +702,41 @@ exports.tomar_orden = async (req, res) => {
     );
   }
 };
+
+//Ordenes para retirar
+exports.ordenes_para_retirar = async (req, res) => {
+  try {
+    const desde = "2022-01-01";
+
+    const host = req.body.host;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
+    const query_ordenes_para_retirar = `SELECT * FROM trabajos WHERE 
+                                          ingresado > "${desde} 00:00:00" AND
+                                          codigo != "ANULADO" AND 
+                                          estado = 23  AND 
+                                          ubicacion = 21`;
+
+    let ordenes_para_retirar = await get_from_urbano(
+      query_ordenes_para_retirar
+    );
+
+    ordenes_para_retirar = await get_ordenes_formateadas(ordenes_para_retirar);
+
+    logger.info(
+      `ordenes_para_retirar - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
+
+    res.render("ordenes_tabla", {
+      titulo: "Ordenes Para Retirar",
+      ordenes: ordenes_para_retirar,
+      tomar: false,
+      reparaciones_por_dia: false,
+      demora: false,
+      fila: 0,
+    });
+  } catch (error) {
+    logger.error(
+      `ordenes_para_retirar - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};

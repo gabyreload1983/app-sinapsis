@@ -13,6 +13,7 @@ router.get(
   "/taller/ingresar-articulo-orden",
   urbano.ingresar_articulo_orden_get
 );
+router.get("/taller/ordenes-para-retirar", urbano.ordenes_para_retirar);
 router.post(
   "/taller/ingresar-articulo-orden-buscar",
   urbano.ingresar_articulo_orden_buscar
