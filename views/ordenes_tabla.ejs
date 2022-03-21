@@ -52,176 +52,102 @@
         </div>
 
         <!-- Tabla con ordenes -->
-        <div class="container bg-light p-0">
-          <table class="table m-0">
-            <thead>
-              <tr class="table-primary">
-                <th>Posicion</th>
-                <th class="d-none d-lg-table-cell">Ingreso</th>
-                <th>Orden</th>
-                <th class="d-none d-lg-table-cell">Cliente</th>
-                <th class="d-none d-lg-table-cell">Prioridad</th>
-                <th class="d-none d-lg-table-cell">Operador</th>
-                <th>Detalles</th>
-                <% if(tomar){ %>
-                <th></th>
-                <% } %>
-              </tr>
-            </thead>
-            <tbody>
-              <% ordenes.forEach(orden=>{ %>
-
-              <tr class="prioridad<%= orden.prioridad %>">
-                <td>#<%= fila += 1 %></td>
-                <td class="d-none d-lg-table-cell"><%= orden.ingresado%></td>
-                <td><%= orden.nrocompro%></td>
-                <td class="d-none d-lg-table-cell"><%= orden.nombre%></td>
-                <td class="d-none d-lg-table-cell"><%= orden.prioridad%></td>
-                <td class="d-none d-lg-table-cell"><%= orden.tecnico%></td>
-
-                <td>
-                  <!-- Button trigger modal -->
+        <div class="container p-0">
+          <!-- Accordion -->
+          <div class="accordion" id="accordionOrdenes">
+            <% ordenes.forEach(orden => { %>
+            <div class="accordion-item bg-transparent border-0">
+              <div class="row justify-content-around m-0">
+                <div class="col">
                   <button
+                    class="accordion-button collapsed prioridad<%= orden.prioridad %>"
                     type="button"
-                    class="btn btn-outline-dark btn-small"
-                    data-bs-toggle="modal"
-                    data-bs-target="#detalle<%= orden.nrocompro%>"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse<%= orden.nrocompro %>"
+                    aria-expanded="false"
+                    aria-controls="collapse<%= orden.nrocompro %>"
                   >
-                    Detalles
+                    <div class="col-1">#<%= fila += 1 %></div>
+                    <div class="col-1"><%= orden.ingresado%></div>
+                    <div class="col-1"><%= orden.nrocompro%></div>
+                    <div class="col"><%= orden.nombre%></div>
+                    <div class="col"><%= orden.prioridad%></div>
+                    <div class="col-1"><%= orden.tecnico%></div>
+                    <div class="col-1"></div>
                   </button>
-
-                  <!-- Modal -->
                   <div
-                    class="modal fade"
-                    id="detalle<%= orden.nrocompro%>"
-                    tabindex="-1"
-                    aria-labelledby="detalle<%= orden.nrocompro%>Label"
-                    aria-hidden="true"
+                    id="collapse<%= orden.nrocompro %>"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="heading<%= orden.nrocompro %>"
+                    data-bs-parent="#accordionOrdenes"
                   >
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5
-                            class="modal-title prioridad<%= orden.prioridad %>"
-                            id="<%= orden.nrocompro%>Label"
-                          >
+                    <div class="accordion-body">
+                      <!-- Detalle Orden -->
+                      <div class="card prioridad<%= orden.prioridad %>">
+                        <div class="card-header">
+                          <%= orden.codigo %> - <%= orden.nombre %>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item bg-light text-uppercase">
                             Estado: <%= orden.estado %>
-                          </h5>
-                          <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                          ></button>
-                        </div>
-                        <div class="modal-body">
-                          <!-- Card Orden -->
-                          <div class="card">
-                            <div
-                              class="card-header prioridad<%= orden.prioridad %>"
-                            >
-                              <h2><%= orden.codigo %> - <%= orden.nombre %></h2>
-                            </div>
-                            <div class="card-body">
-                              <ul class="list-group list-group-flush">
-                                <li class="list-group-item bg-light">
-                                  Orden: <%= orden.nrocompro %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Producto: <%= orden.descart %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Falla:
-                                  <div class="form-diagnostico">
-                                    <textarea
-                                      class="form-control"
-                                      id="falla_<%= orden.nrocompro %>"
-                                      style="height: 100px"
-                                      disabled
-                                    >
-<%= orden.falla %>
-                                    </textarea>
-                                  </div>
-                                </li>
-                                <li class="list-group-item">
-                                  Diagnostico: <%= orden.diag %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Diagnostico tecnico:
-                                  <div class="form-diagnostico">
-                                    <textarea
-                                      class="form-control"
-                                      id="textarea_<%= orden.nrocompro %>"
-                                      style="height: 100px"
-                                    >
-<%= orden.diagnostico %></textarea
-                                    >
-                                  </div>
-                                </li>
-                                <li
-                                  class="list-group-item <%= orden.bgDescription %>"
-                                >
-                                  Ubicacion: <%= orden.ubicacion %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Fecha de ingreso: <%= orden.ingresado %>
-                                </li>
+                          </li>
+                          <li class="list-group-item bg-light text-uppercase">
+                            Diagnostico: <%= orden.diag %>
+                          </li>
+                          <li class="list-group-item bg-light text-uppercase">
+                            Ubicacion: <%= orden.ubicacion %>
+                          </li>
 
-                                <li class="list-group-item bg-light">
-                                  Telefono:
-                                  <a
-                                    target="_blank"
-                                    href="https://api.whatsapp.com/send?phone=+549<%= orden.telefono %>&text=Hola, nos comunicamos de Sinapsis SRL..."
-                                    ><%= orden.telefono %></a
-                                  >
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Sector: <%= orden.codiart %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Accesorios: <%= orden.accesorios %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Prioridad: <%= orden.prioridad %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Tecnico: <%= orden.tecnico %>
-                                </li>
-                                <li class="list-group-item bg-light">
-                                  Costo: $<%= orden.costo %>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                          >
-                            Close
-                          </button>
-                        </div>
+                          <li class="list-group-item bg-light">
+                            TELEFONO:
+                            <a
+                              target="_blank"
+                              href="https://api.whatsapp.com/send?phone=+549<%= orden.telefono %>"
+                            >
+                              <%= orden.telefono %>
+                            </a>
+                          </li>
+                          <li class="list-group-item bg-light">
+                            ARTICULO: <%= orden.descart %>
+                          </li>
+                          <li class="list-group-item bg-light">
+                            FALLA: <%= orden.falla %>
+                          </li>
+                          <li class="list-group-item bg-light">
+                            ACCESORIOS: <%= orden.accesorios %>
+                          </li>
+
+                          <li class="list-group-item bg-light">
+                            DIAGNOSTICO TECNICO: <%= orden.diagnostico %>
+                          </li>
+                          <li class="list-group-item bg-light">
+                            MANO DE OBRA: $<%= orden.costo %>
+                          </li>
+                          <li class="list-group-item bg-light">
+                            TOTAL: $<%= orden.total %>
+                          </li>
+                          <li class="list-group-item bg-light"></li>
+                        </ul>
                       </div>
                     </div>
                   </div>
-                </td>
-                <% if(tomar){ %>
-                <td class="d-none d-lg-table-cell">
+                </div>
+                <div class="col-1">
+                  <% if(tomar){ %>
+
                   <button
                     class="btn btn-primary btn_tomar"
                     id="<%= orden.nrocompro%>"
                   >
                     Tomar
                   </button>
-                </td>
-                <% } %>
-              </tr>
 
-              <%}) %>
-            </tbody>
-          </table>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+          </div>
         </div>
       </div>
     </div>
