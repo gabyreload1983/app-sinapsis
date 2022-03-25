@@ -714,7 +714,8 @@ exports.ordenes_para_retirar = async (req, res) => {
                                           ingresado > "${desde} 00:00:00" AND
                                           codigo != "ANULADO" AND 
                                           estado = 23  AND 
-                                          ubicacion = 21`;
+                                          ubicacion = 21
+                                          ORDER BY ingresado DESC`;
 
     let ordenes_para_retirar = await get_from_urbano(
       query_ordenes_para_retirar
