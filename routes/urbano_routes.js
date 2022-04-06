@@ -8,12 +8,17 @@ const router = Router();
 router.get("/", urbano.index);
 router.get("/taller/orden-reparacion", urbano.orden_de_reparacion);
 router.get("/taller/ordenes-en-proceso", urbano.ordenes_en_proceso);
+router.get("/taller/mis-ordenes-tomadas", urbano.mis_ordenes_tomadas);
 router.get("/taller/estadisticas-tecnicos", urbano.estadisticas_tecnicos);
 router.get(
   "/taller/ingresar-articulo-orden",
   urbano.ingresar_articulo_orden_get
 );
 router.get("/taller/ordenes-para-retirar", urbano.ordenes_para_retirar);
+router.post(
+  "/taller/guardar-diagnostico-orden",
+  urbano.guardar_diagnostico_orden
+);
 router.post(
   "/taller/ingresar-articulo-orden-buscar",
   urbano.ingresar_articulo_orden_buscar

@@ -741,3 +741,62 @@ exports.ordenes_para_retirar = async (req, res) => {
     );
   }
 };
+
+//Mis ordenes tomadas
+exports.mis_ordenes_tomadas = async (req, res) => {
+  try {
+    const codigo_tecnico = req.body.codigo_tecnico_log.toUpperCase();
+    const host = req.body.host;
+    logger.info(
+      `mis_ordenes_tomadas - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
+
+    const query_mis_ordenes_tomadas = `SELECT * FROM trabajos 
+                    WHERE tecnico="${codigo_tecnico}" AND estado = 22 AND codigo != "ANULADO"
+                    ORDER BY prioridad DESC`;
+    let mis_ordenes_tomadas = await get_from_urbano(query_mis_ordenes_tomadas);
+    mis_ordenes_tomadas = await get_ordenes_formateadas(mis_ordenes_tomadas);
+
+    res.render("mis_ordenes_tomadas", {
+      titulo: "Mis Ordenes Tomadas",
+      ordenes: mis_ordenes_tomadas,
+      diagnostico: true,
+      tomar: false,
+      reparaciones_por_dia: false,
+      demora: false,
+      fila: 0,
+    });
+  } catch (error) {
+    logger.error(
+      `mis_ordenes_tomadas - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+//guardar_diagnostico_orden
+exports.guardar_diagnostico_orden = async (req, res) => {
+  try {
+    const codigo_tecnico = req.body.codigo_tecnico_log.toUpperCase();
+    const { host, orden, diagnostico } = req.body;
+
+    const query_actualizar_diagnostico = `UPDATE trabajos SET diagnostico = "${diagnostico}" WHERE nrocompro= "ORX0011000${orden}"`;
+
+    const result = await get_from_urbano(query_actualizar_diagnostico);
+
+    if (result.affectedRows !== 0) {
+      logger.info(
+        `guardar_diagnostico_orden - Se guardo diagnostico - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+      res.status(200).send(result);
+    } else {
+      logger.info(
+        `guardar_diagnostico_orden - NO se guardo diagnostico - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+      res.status(404).send({ result: false });
+    }
+  } catch (error) {
+    logger.error(
+      `guardar_diagnostico_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};

@@ -1,0 +1,114 @@
+<!-- Tabla con ordenes -->
+<div class="container p-0">
+  <!-- Accordion -->
+  <div class="accordion" id="accordionOrdenes">
+    <% ordenes.forEach(orden => { %>
+    <div class="accordion-item bg-transparent border-0">
+      <div class="row justify-content-around m-0">
+        <div class="col">
+          <button
+            class="accordion-button collapsed prioridad<%= orden.prioridad %>"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse<%= orden.nrocompro %>"
+            aria-expanded="false"
+            aria-controls="collapse<%= orden.nrocompro %>"
+          >
+            <div class="col-1">#<%= fila += 1 %></div>
+            <div class="col-1"><%= orden.ingresado%></div>
+            <div class="col-1"><%= orden.nrocompro%></div>
+            <div class="col"><%= orden.nombre%></div>
+            <div class="col"><%= orden.prioridad%></div>
+            <div class="col-1"><%= orden.tecnico%></div>
+            <div class="col-1"></div>
+          </button>
+          <div
+            id="collapse<%= orden.nrocompro %>"
+            class="accordion-collapse collapse"
+            aria-labelledby="heading<%= orden.nrocompro %>"
+            data-bs-parent="#accordionOrdenes"
+          >
+            <div class="accordion-body">
+              <!-- Detalle Orden -->
+              <div class="card prioridad<%= orden.prioridad %>">
+                <div class="card-header">
+                  <%= orden.codigo %> - <%= orden.nombre %>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item bg-light text-uppercase">
+                    Estado: <%= orden.estado %>
+                  </li>
+                  <li class="list-group-item bg-light text-uppercase">
+                    Diagnostico: <%= orden.diag %>
+                  </li>
+                  <li class="list-group-item bg-light text-uppercase">
+                    Ubicacion: <%= orden.ubicacion %>
+                  </li>
+
+                  <li class="list-group-item bg-light">
+                    TELEFONO:
+                    <a
+                      target="_blank"
+                      href="https://api.whatsapp.com/send?phone=+549<%= orden.telefono %>"
+                    >
+                      <%= orden.telefono %>
+                    </a>
+                  </li>
+                  <li class="list-group-item bg-light">
+                    ARTICULO: <%= orden.descart %>
+                  </li>
+                  <li class="list-group-item bg-light">
+                    FALLA: <%= orden.falla %>
+                  </li>
+                  <li class="list-group-item bg-light">
+                    ACCESORIOS: <%= orden.accesorios %>
+                  </li>
+
+                  <!-- DIAGNOSTICO -->
+                  <li class="list-group-item bg-light">
+                    DIAGNOSTICO TECNICO:
+                    <form class="form_diagnostico" id="<%= orden.nrocompro %>">
+                      <div class="mb-3">
+                        <textarea
+                          class="form-control"
+                          name="diagnostico"
+                          id="diagnostico<%= orden.nrocompro %>"
+                        >
+<%= orden.diagnostico %></textarea
+                        >
+                      </div>
+
+                      <button
+                        type="submit"
+                        class="btn btn-primary btn_guardar_diagnostico"
+                      >
+                        Guardar
+                      </button>
+                    </form>
+                  </li>
+                  <li class="list-group-item bg-light">
+                    MANO DE OBRA: $<%= orden.costo %>
+                  </li>
+                  <li class="list-group-item bg-light">
+                    TOTAL: $<%= orden.total %>
+                  </li>
+                  <li class="list-group-item bg-light"></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-1">
+          <% if(tomar){ %>
+
+          <button class="btn btn-primary btn_tomar" id="<%= orden.nrocompro%>">
+            Tomar
+          </button>
+
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
