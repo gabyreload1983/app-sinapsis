@@ -45,11 +45,7 @@
                 >Impresoras Pendientes</a
               >
             </li>
-            <li>
-              <a class="dropdown-item" href="/urbano/taller/ordenes-en-proceso"
-                >Ordenes en Proceso</a
-              >
-            </li>
+
             <li>
               <a class="dropdown-item" href="/urbano/taller/mis-ordenes-tomadas"
                 >Mis Ordenes Tomadas</a
@@ -57,6 +53,41 @@
             </li>
           </ul>
         </li>
+
+        <!-- Vendedores -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="estadisticasDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Vendedores
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-dark"
+            aria-labelledby="estadisticasDropdown"
+          >
+            <!-- Lista ordenes para retirar -->
+            <li>
+              <a
+                class="dropdown-item"
+                href="/urbano/taller/ordenes-para-retirar"
+              >
+                Ordenes para retirar
+              </a>
+            </li>
+            <!-- Ingresar Articulo en Orden -->
+            <li class="nav-item">
+              <a class="dropdown-item disabled" href="#">
+                Ingresar/Devolver Articulo
+              </a>
+            </li>
+          </ul>
+        </li>
+
         <!-- Estadisticas -->
         <li class="nav-item dropdown">
           <a
@@ -77,24 +108,15 @@
               <a
                 class="dropdown-item"
                 href="/urbano/taller/estadisticas-tecnicos"
-                >Tecnicos</a
+                >Reparaciones</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" href="/urbano/taller/ordenes-en-proceso"
+                >Ordenes en Proceso</a
               >
             </li>
           </ul>
-        </li>
-
-        <!-- Ingresar Articulo en Orden -->
-        <li class="nav-item">
-          <a class="nav-link" href="/urbano/taller/ingresar-articulo-orden">
-            Ingresar Articulo
-          </a>
-        </li>
-
-        <!-- Lista ordenes para retirar -->
-        <li class="nav-item">
-          <a class="nav-link" href="/urbano/taller/ordenes-para-retirar">
-            Ordenes para retirar
-          </a>
         </li>
       </ul>
 
