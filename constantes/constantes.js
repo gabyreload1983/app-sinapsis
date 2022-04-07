@@ -59,6 +59,10 @@ exports.tecnicos = [
     codigo: "MATIT",
     nombre: "MATIAS",
   },
+  {
+    codigo: "CLAUT",
+    nombre: "CLAUDIO",
+  },
 ];
 
 exports.iva = {
