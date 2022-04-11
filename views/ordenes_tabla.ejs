@@ -69,7 +69,7 @@
                   >
                     <div class="col-1">#<%= fila += 1 %></div>
                     <div class="col-1"><%= orden.ingresado%></div>
-                    <div class="col-1"><%= orden.nrocompro%></div>
+                    <div class="col-1<%= orden.falla.includes("TURNO") ? " fw-bold text-white bg-dark" : "" %>"><%= orden.nrocompro%></div>
                     <div class="col"><%= orden.nombre%></div>
                     <div class="col"><%= orden.prioridad%></div>
                     <div class="col-1"><%= orden.tecnico%></div>
