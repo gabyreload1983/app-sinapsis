@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("./partials/head.ejs") %>
+  <body>
+    <!-- NAV -->
+    <%- include("./partials/navbar.ejs") %>
+    <div class="container-fluid pt-5 min-vh-100" id="main">
+      <div class="mx-5 pt-4" id="content">
+        <!-- Contenido -->
+        
+        <div class="row justify-content-center mb-3">
+          <div class="bg-light text-center rounded col-5">
+            <h2 class="m-0 py-2">AGREGAR ARTICULO EN ORDEN</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <!-- buscar orden -->
+            <div class="row mb-3">
+              <div class="col-6">
+                <div class="input-group mb-3">
+                  <input
+                    type="number"
+                    maxlength="5"
+                    minlength="5"
+                    class="form-control"
+                    placeholder="Buscar Orden"
+                    aria-label="Buscar Orden"
+                    id="inputBuscarOrden"
+                  />
+                  <button
+                    class="btn btn-secondary"
+                    type="button"
+                    id="btnBuscarOrden"
+                  >
+                    BUSCAR
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- tabla orden -->
+            <div class="row mb-3">
+              <div class="col-12">
+                <table class="table table-primary">
+                  <thead>
+                    <tr>
+                      <th scope="col">ORDEN</th>
+                      <th scope="col">CODIGO</th>
+                      <th scope="col">CLIENTE</th>
+                      <th scope="col">TECNICO</th>
+                      <th scope="col">USUARIO</th>
+                    </tr>
+                  </thead>
+                  <tbody class="tbodyOrdenHeader"></tbody>
+                </table>
+                <strong class="date bg-light p-1 rounded d-none"></strong>
+              </div>
+            </div>
+            <!-- tabla articulos en orden -->
+            <div class="row mb-3">
+             
+              <div class="col-12">
+                <div class="bg-light text-center rounded col-6 mb-2">
+                  <h6 class="m-0 py-2">ARTICULOS EN ORDEN</h2>
+                </div>
+                <table class="table table-secondary">
+                  <thead>
+                    <tr>
+                      <th scope="col">CODIGO</th>
+                      <th scope="col">DESCRIPCION</th>
+                      <th scope="col">SERIE</th>
+                    </tr>
+                  </thead>
+                  <tbody class="tbodyArticulosOrden"></tbody>
+                </table>
+              </div>
+            </div>
+            <!-- tabla articulos que se van agregar a la orden -->
+            <div class="row mb-3">
+             
+              <div class="col-12">
+                <div class="bg-light text-center rounded col-6 mb-2">
+                  <h6 class="m-0 py-2">AGREGAR ARTICULOS</h2>
+                </div>
+                <table class="table table-secondary">
+                  <thead>
+                    <tr>
+                      <th scope="col">CODIGO</th>
+                      <th scope="col">DESCRIPCION</th>
+                      <th scope="col">SERIE</th>
+                    </tr>
+                  </thead>
+                  <tbody class="tbodyAgregarArticulos"></tbody>
+                </table>
+           
+                <div class="col">
+                  <button class="btn btn-primary disabled" id="btnConfirmar">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    CONFIRMAR
+                  </button>
+                  <button class="btn btn-danger" id="btnReset">RESET</button>
+                  <button class="btn btn-secondary d-none" id="btnImprimir">IMPRIMIR</button>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <div class="col" >
+            <!-- buscar articulos -->
+            <div class="row mb-3 d-none" id="buscarArticulos">
+              <div class="col-6 mb-3">
+                <div class="input-group mb-3">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Buscar Articulo"
+                    aria-label="Buscar Articulo"
+                    id="inputBuscarArticulo"
+                  />
+                  <button
+                    class="btn btn-primary"
+                    type="button"
+                    id="btnBuscarArticulo"
+                  >
+                    BUSCAR
+                  </button>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <table class="table table-primary">
+                    <thead>
+                      <tr>
+                        <th scope="col">CODIGO</th>
+                        <th scope="col">DESCRIPCION</th>
+                        <th scope="col">STOCK</th>
+                      </tr>
+                    </thead>
+                    <tbody class="tbodyBuscarArticulo"></tbody>
+                  </table>
+                </div>
+               </div>
+
+            </div>
+            <!-- tabla busqueda articulos -->
+        
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <%- include("./partials/js.ejs") %>
+    <script src="/js/agregar_articulo_orden.js"></script>
+  </body>
+</html>

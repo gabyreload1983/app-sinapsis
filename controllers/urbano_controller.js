@@ -486,3 +486,179 @@ exports.guardar_diagnostico_orden = async (req, res) => {
     );
   }
 };
+
+// agregar articulo en orden
+exports.agregar_articulo_orden = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
+
+    logger.info(
+      `agregar_articulo_orden - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
+
+    res.render("agregar_articulo_orden", {
+      titulo: "agregar articulo orden",
+    });
+  } catch (error) {
+    logger.error(
+      `agregar_articulo_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+//buscar orden de reparacion
+exports.buscar_orden_reparacion = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
+    const { orden_reparacion } = req.query;
+
+    const query_orden = `SELECT * FROM trabajos WHERE nrocompro = "ORX0011000${orden_reparacion}"`;
+    const query_articulos_en_orden = `SELECT * FROM trrenglo INNER JOIN articulo ON trrenglo.codart= articulo.codigo
+                                     WHERE trrenglo.nrocompro = "ORX0011000${orden_reparacion}"`;
+
+    //Buscar orden
+    let orden = await get_from_urbano(query_orden);
+
+    if (orden.length !== 0) {
+      //Buscar articulos en orden
+      const articulos = await get_from_urbano(query_articulos_en_orden);
+
+      logger.info(
+        `buscar_orden_reparacion - Usuario: ${codigo_tecnico} - Host: ${host} 
+      Busqueda orden: ${orden_reparacion}`
+      );
+      res.status(200).send({
+        titulo: "Buscar orden",
+        orden: orden,
+        articulos: articulos,
+        codigo_tecnico: codigo_tecnico,
+      });
+    } else {
+      res.status(200).send({
+        titulo: "Buscar orden",
+        orden: false,
+        articulos: false,
+        codigo_tecnico: false,
+      });
+    }
+  } catch (error) {
+    logger.error(
+      `buscar_orden_reparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+//buscar articulo
+exports.buscar_articulo = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
+    const { articulo } = req.query;
+
+    const query_buscar_articulo = `SELECT 
+                                    articulo.codigo AS codigo, 
+                                    articulo.descrip AS descripcion, 
+                                    (stockd01 - reserd01) AS stock,
+                                    articulo.trabaserie
+                                    FROM articulo 
+                                    INNER JOIN artstk01
+                                    ON articulo.codigo= artstk01.codigo
+                                    WHERE articulo.descrip LIKE "%${articulo}%" AND (stockd01 - reserd01) > 0
+                                    ORDER BY articulo.descrip`;
+
+    const articulos = await get_from_urbano(query_buscar_articulo);
+
+    if (articulos.length !== 0) {
+      logger.info(
+        `buscar_articulo - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+      res.status(200).send({
+        titulo: "Buscar orden",
+        articulos: articulos,
+      });
+    } else {
+      res.status(200).send({
+        titulo: "Buscar orden",
+        articulos: false,
+      });
+    }
+  } catch (error) {
+    logger.error(
+      `buscar_articulo - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+//buscar serie
+exports.buscar_serie = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
+    const { serie, codigo } = req.query;
+
+    const query_buscar_serie = `SELECT * FROM serie2 
+                                  INNER JOIN articulo ON serie2.codigo = articulo.codigo 
+                                  WHERE serie = "${serie}" LIMIT 1`;
+
+    const serieOk = await get_from_urbano(query_buscar_serie);
+
+    if (serieOk.length !== 0 && serieOk[0].codigo !== codigo) {
+      res.status(200).send({
+        titulo: "Buscar serie",
+        serieOk: false,
+      });
+    } else {
+      res.status(200).send({
+        titulo: "Buscar serie",
+        serieOk: serieOk,
+      });
+    }
+  } catch (error) {
+    logger.error(
+      `buscar_serie - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+exports.ingresar_articulos = async (req, res) => {
+  try {
+    const {
+      host,
+      codigo_tecnico_log: codigo_tecnico,
+      ingresoArticulos,
+    } = req.body;
+
+    // console.log("data: ", ingresoArticulos);
+
+    ingresoArticulos.articulos.forEach(async (articulo) => {
+      try {
+        const query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${articulo.codigo}`;
+        const query_ingresar_articulo_orden = `INSERT INTO trrenglo
+        (serie, ingreso, cliente, operador, tecnico, codart, descart, nrocompro, pendiente)
+        SELECT "${articulo.serie}", NOW(), ${ingresoArticulos.codigo}, 
+        "${ingresoArticulos.usuario}", 
+        "${ingresoArticulos.tecnico}", 
+        ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", 1
+        FROM articulo
+        WHERE codigo = ${articulo.codigo}`;
+
+        const resultIngresar = await get_from_urbano(
+          query_ingresar_articulo_orden
+        );
+        const resultReserva = await get_from_urbano(query_reserva_articulo);
+      } catch (error) {
+        res.status(400).send({
+          titulo: "Buscar serie",
+          transaccion: false,
+        });
+      }
+    });
+
+    res.status(200).send({
+      titulo: "Buscar serie",
+      transaccion: true,
+    });
+  } catch (error) {
+    logger.error(
+      `ingresar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
