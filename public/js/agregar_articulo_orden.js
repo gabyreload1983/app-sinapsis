@@ -12,6 +12,8 @@ $(function () {
     const tbodyOrdenHeader = $(".tbodyOrdenHeader");
     tbodyArticulosOrden.empty();
     tbodyOrdenHeader.empty();
+    $(".tbodyAgregarArticulos").empty();
+    $(".date").empty().addClass("d-none");
 
     $.ajax({
       url: "/urbano/taller/buscar-orden-reparacion",
@@ -127,7 +129,7 @@ $(function () {
           btnReset.addClass("disabled");
           btnImprimir.removeClass("d-none");
           const now = moment().format("DD-MM-YYYY / hh:mm:ss");
-          $(".date").removeClass("d-none").val("").append(now);
+          $(".date").removeClass("d-none").append(`FECHA: ${now}`);
         } else {
           console.log(`No se guardaron articulos!`);
           $(".spinner-border").addClass("d-none");
@@ -141,7 +143,7 @@ $(function () {
     tables.empty();
     $("#inputBuscarArticulo").val("");
     $("#inputBuscarOrden").val("");
-    $(".date").addClass("d-none").val("");
+    $(".date").empty().addClass("d-none");
     btnConfirmar.addClass("disabled");
     btnImprimir.addClass("d-none");
     buscarArticulos.addClass("d-none");
