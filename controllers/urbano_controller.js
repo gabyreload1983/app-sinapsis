@@ -496,12 +496,33 @@ exports.agregar_articulo_orden = async (req, res) => {
       `agregar_articulo_orden - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
-    res.render("agregar_articulo_orden", {
+    res.render("agregar_quitar_articulo_orden", {
       titulo: "agregar articulo orden",
+      agregarArticulo: true,
     });
   } catch (error) {
     logger.error(
       `agregar_articulo_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+// agregar articulo en orden
+exports.quitar_articulo_orden = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
+
+    logger.info(
+      `quitar_articulo_orden - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
+
+    res.render("agregar_quitar_articulo_orden", {
+      titulo: "quitar articulo orden",
+      agregarArticulo: false,
+    });
+  } catch (error) {
+    logger.error(
+      `quitar_articulo_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
@@ -569,7 +590,7 @@ exports.buscar_articulo = async (req, res) => {
 
     if (articulos.length !== 0) {
       logger.info(
-        `buscar_articulo - Usuario: ${codigo_tecnico} - Host: ${host}`
+        `buscar_articulo - ${articulo} - Usuario: ${codigo_tecnico} - Host: ${host}`
       );
       res.status(200).send({
         titulo: "Buscar orden",
@@ -600,6 +621,10 @@ exports.buscar_serie = async (req, res) => {
 
     const serieOk = await get_from_urbano(query_buscar_serie);
 
+    logger.info(
+      `buscar_serie - ${serie} - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
+
     if (serieOk.length !== 0 && serieOk[0].codigo !== codigo) {
       res.status(200).send({
         titulo: "Buscar serie",
@@ -626,7 +651,9 @@ exports.ingresar_articulos = async (req, res) => {
       ingresoArticulos,
     } = req.body;
 
-    // console.log("data: ", ingresoArticulos);
+    logger.info(
+      `ingresar_articulos - ${ingresoArticulos} - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
 
     ingresoArticulos.articulos.forEach(async (articulo) => {
       try {
@@ -646,7 +673,7 @@ exports.ingresar_articulos = async (req, res) => {
         const resultReserva = await get_from_urbano(query_reserva_articulo);
       } catch (error) {
         res.status(400).send({
-          titulo: "Buscar serie",
+          titulo: "ingresar articulos",
           transaccion: false,
         });
       }
@@ -659,6 +686,54 @@ exports.ingresar_articulos = async (req, res) => {
   } catch (error) {
     logger.error(
       `ingresar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+exports.quitar_articulos = async (req, res) => {
+  try {
+    const {
+      host,
+      codigo_tecnico_log: codigo_tecnico,
+      quitarArticulos,
+    } = req.body;
+
+    logger.info(
+      `quitar_articulos - ${quitarArticulos} - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
+
+    quitarArticulos.articulos.forEach(async (articulo) => {
+      try {
+        const query_quitar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codigo}`;
+        const query_quitar_articulo_orden = `UPDATE trrenglo SET 
+            serie="", ingreso="", cliente="", operador="", tecnico="", codart="", descart="", nrocompro="", pendiente=""
+            WHERE  cliente = ${quitarArticulos.codigo} AND 
+            codart= ${articulo.codigo} AND 
+            nrocompro = "${quitarArticulos.orden}" AND 
+            serie = "${articulo.serie}" 
+            LIMIT 1`;
+
+        const resultIngresar = await get_from_urbano(
+          query_quitar_articulo_orden
+        );
+        const resultReserva = await get_from_urbano(
+          query_quitar_reserva_articulo
+        );
+      } catch (error) {
+        res.status(400).send({
+          titulo: "Buscar serie",
+          transaccion: false,
+        });
+      }
+    });
+
+    res.status(200).send({
+      titulo: "Buscar serie",
+      transaccion: true,
+    });
+  } catch (error) {
+    logger.error(
+      `quitar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };

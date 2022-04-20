@@ -24,23 +24,28 @@ $(function () {
         if (data.orden) {
           buscarArticulos.removeClass("d-none");
           tbodyOrdenHeader.append(`
-            <tr>
-              <td>${data.orden[0].nrocompro}</td>
-              <td>${data.orden[0].codigo}</td>
-              <td>${data.orden[0].nombre}</td>
-              <td>${data.orden[0].tecnico}</td>
-              <td class="text-uppercase">${data.codigo_tecnico}</td>
-            </tr>
-          `);
-
-          data.articulos.forEach((articulo) => {
-            tbodyArticulosOrden.append(`
-            <tr>
-              <td>${articulo.codart}</td>
-              <td>${articulo.descart}</td>
-              <td>${articulo.serie}</td>
-            </tr>
+              <tr>
+                <td>${data.orden[0].nrocompro}</td>
+                <td>${data.orden[0].codigo}</td>
+                <td>${data.orden[0].nombre}</td>
+                <td>${data.orden[0].tecnico}</td>
+                <td class="text-uppercase">${data.codigo_tecnico}</td>
+              </tr>
             `);
+
+          data.articulos.forEach((articulo, index) => {
+            tbodyArticulosOrden.append(`
+              <tr id="tr-${index}">
+                <td>${articulo.codart}</td>
+                <td>${articulo.descart}</td>
+                <td>${articulo.serie}</td>
+                <td>
+                <button 
+                    onClick="quitarArticulo(${articulo.codart}, '${articulo.descart}', '${articulo.serie}',${index})" 
+                    class="btn btn-sm btn-danger btn-quitar"
+                >x</button></td>
+              </tr>
+              `);
           });
         } else {
           buscarArticulos.addClass("d-none");
@@ -54,86 +59,48 @@ $(function () {
     if (e.keyCode === 13) btnBuscarOrden.click();
   });
 
-  const btnBuscarArticulo = $("#btnBuscarArticulo");
-
-  btnBuscarArticulo.on("click", function () {
-    const inputBuscarArticulo = $("#inputBuscarArticulo").val();
-    $("#inputBuscarOrden").prop("disabled", true);
-    $("#btnBuscarOrden").addClass("disabled");
-
-    tbodyBuscarArticulo.empty();
-    $.ajax({
-      url: "/urbano/taller/buscar-articulo",
-      type: "get",
-      dataType: "json",
-      data: { articulo: inputBuscarArticulo },
-      success: function (data) {
-        if (data.articulos) {
-          data.articulos.forEach((articulo) => {
-            tbodyBuscarArticulo.append(`
-            <tr style="cursor:pointer" onclick="articulo_seleccionado('${articulo.codigo}','${articulo.descripcion}', '${articulo.trabaserie}')">
-              <td>${articulo.codigo}</td>
-              <td>${articulo.descripcion}</td>
-              <td>${articulo.stock}</td>
-            </tr>
-            `);
-          });
-        } else {
-          alert(`No se encontro ningun articulo.`);
-        }
-      },
-    });
-  });
-
-  $("#inputBuscarArticulo").on("keypress", function (e) {
-    if (e.keyCode === 13) btnBuscarArticulo.click();
-  });
-
   btnConfirmar.on("click", function () {
-    tbodyBuscarArticulo.empty();
+    $(".btn-quitar").addClass("disabled");
+    $(".spinner-border").removeClass("d-none");
     const tbodyOrdenHeader = $(".tbodyOrdenHeader");
-    const tbodyAgregarArticulos = $(".tbodyAgregarArticulos")[0].children;
+    const tbodyQuitarArticulos = $(".tbodyQuitarArticulos")[0].children;
 
-    const ingresoArticulos = {};
-    ingresoArticulos.orden = tbodyOrdenHeader[0].children[0].cells[0].innerText;
-    ingresoArticulos.codigo =
-      tbodyOrdenHeader[0].children[0].cells[1].innerText;
-    ingresoArticulos.cliente =
+    const quitarArticulos = {};
+    quitarArticulos.orden = tbodyOrdenHeader[0].children[0].cells[0].innerText;
+    quitarArticulos.codigo = tbodyOrdenHeader[0].children[0].cells[1].innerText;
+    quitarArticulos.cliente =
       tbodyOrdenHeader[0].children[0].cells[2].innerText;
-    ingresoArticulos.tecnico =
+    quitarArticulos.tecnico =
       tbodyOrdenHeader[0].children[0].cells[3].innerText;
-    ingresoArticulos.usuario =
+    quitarArticulos.usuario =
       tbodyOrdenHeader[0].children[0].cells[4].innerText;
 
-    ingresoArticulos.articulos = [];
+    quitarArticulos.articulos = [];
 
-    [...tbodyAgregarArticulos].forEach((articulo) => {
-      ingresoArticulos.articulos.push({
+    [...tbodyQuitarArticulos].forEach((articulo) => {
+      quitarArticulos.articulos.push({
         codigo: articulo.cells[0].innerText,
         descripcion: articulo.cells[1].innerText,
         serie: articulo.cells[2].innerText,
       });
     });
 
-    $(".spinner-border").removeClass("d-none");
-
     $.ajax({
-      url: "/urbano/taller/ingresar-articulos",
+      url: "/urbano/taller/quitar-articulos",
       type: "post",
       dataType: "json",
-      data: { ingresoArticulos },
+      data: { quitarArticulos },
       success: function (data) {
         if (data.transaccion) {
           console.log("ok");
           $(".spinner-border").addClass("d-none");
-          buscarArticulos.addClass("d-none");
           btnConfirmar.addClass("disabled");
           btnReset.addClass("disabled");
           btnImprimir.removeClass("d-none");
           const now = moment().format("DD-MM-YYYY / hh:mm:ss");
           $(".date").removeClass("d-none").append(`FECHA: ${now}`);
         } else {
-          console.log(`No se guardaron articulos!`);
+          console.log(`No se quitaron articulos!`);
           $(".spinner-border").addClass("d-none");
         }
       },
@@ -145,8 +112,7 @@ $(function () {
     $("#btnBuscarOrden").removeClass("disabled");
     const tables = $("tbody");
     tables.empty();
-    $("#inputBuscarArticulo").val("");
-    $("#inputBuscarOrden").val("");
+    $(".spinner-border").addClass("d-none");
     $(".date").empty().addClass("d-none");
     btnConfirmar.addClass("disabled");
     btnImprimir.addClass("d-none");
@@ -161,6 +127,23 @@ $(function () {
   });
 });
 
+function quitarArticulo(codigo, descripcion, serie, index) {
+  $("#inputBuscarOrden").prop("disabled", true);
+  $("#btnBuscarOrden").addClass("disabled");
+  const tbodyQuitarArticulos = $(".tbodyQuitarArticulos");
+  tbodyQuitarArticulos.append(`
+                <tr>
+                  <td>${codigo}</td>
+                  <td>${descripcion}</td>
+                  <td>${serie}</td>
+                </tr>
+              `);
+
+  const tr = `#tr-${index}`;
+  $(tr).empty();
+  $("#btnConfirmar").removeClass("disabled");
+}
+/* 
 function articulo_seleccionado(codigo, descripcion, trabaserie) {
   const tbodyAgregarArticulos = $(".tbodyAgregarArticulos");
   const btnConfirmar = $("#btnConfirmar");
@@ -180,12 +163,12 @@ function articulo_seleccionado(codigo, descripcion, trabaserie) {
             btnConfirmar.removeClass("disabled");
 
             tbodyAgregarArticulos.append(`
-              <tr>
-                <td>${codigo}</td>
-                <td>${descripcion}</td>
-                <td>${serie}</td>
-              </tr>
-            `);
+                <tr>
+                  <td>${codigo}</td>
+                  <td>${descripcion}</td>
+                  <td>${serie}</td>
+                </tr>
+              `);
           } else {
             alert("Serie pertenece a otro producto!");
           }
@@ -195,11 +178,11 @@ function articulo_seleccionado(codigo, descripcion, trabaserie) {
   } else {
     btnConfirmar.removeClass("disabled");
     tbodyAgregarArticulos.append(`
-      <tr>
-        <td>${codigo}</td>
-        <td>${descripcion}</td>
-        <td></td>
-      </tr>
-    `);
+        <tr>
+          <td>${codigo}</td>
+          <td>${descripcion}</td>
+          <td></td>
+        </tr>
+      `);
   }
-}
+} */

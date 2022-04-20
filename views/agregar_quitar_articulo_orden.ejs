@@ -8,13 +8,17 @@
       <div class="mx-5 pt-4" id="content">
         <!-- Contenido -->
         
-        <div class="row justify-content-center mb-3">
-          <div class="bg-light text-center rounded col-5">
-            <h2 class="m-0 py-2">AGREGAR ARTICULO EN ORDEN</h2>
-          </div>
-        </div>
+        
+            <h2 class="text-center text-white py-2">
+              
+              <% if (agregarArticulo) { %>
+                AGREGAR ARTICULO EN ORDEN
+                <% } else { %>
+                QUITAR ARTICULO EN ORDEN
+              <% } %>
+            </h2>
         <div class="row">
-          <div class="col">
+          <div class="col-8">
             <!-- buscar orden -->
             <div class="row mb-3">
               <div class="col-6">
@@ -41,7 +45,7 @@
             <!-- tabla orden -->
             <div class="row mb-3">
               <div class="col-12">
-                <table class="table table-primary">
+                <table class="table table-sm table-primary">
                   <thead>
                     <tr>
                       <th scope="col">ORDEN</th>
@@ -63,26 +67,30 @@
                 <div class="bg-light text-center rounded col-6 mb-2">
                   <h6 class="m-0 py-2">ARTICULOS EN ORDEN</h2>
                 </div>
-                <table class="table table-secondary">
+                <table class="table table-sm table-secondary">
                   <thead>
                     <tr>
                       <th scope="col">CODIGO</th>
                       <th scope="col">DESCRIPCION</th>
                       <th scope="col">SERIE</th>
+                      <% if (!agregarArticulo) { %>
+                      <th></th>
+                      <% } %>
                     </tr>
                   </thead>
                   <tbody class="tbodyArticulosOrden"></tbody>
                 </table>
               </div>
             </div>
+            <% if (agregarArticulo) { %>
             <!-- tabla articulos que se van agregar a la orden -->
             <div class="row mb-3">
              
               <div class="col-12">
                 <div class="bg-light text-center rounded col-6 mb-2">
-                  <h6 class="m-0 py-2">AGREGAR ARTICULOS</h2>
+                  <h6 class="m-0 py-2">ARTICULOS QUE SE AGREGAN A LA ORDEN</h2>
                 </div>
-                <table class="table table-secondary">
+                <table class="table table-sm table-secondary">
                   <thead>
                     <tr>
                       <th scope="col">CODIGO</th>
@@ -103,9 +111,40 @@
                 </div>
               </div>
             </div>
-            
+            <% } else { %>
+              <!-- tabla articulos que se van a quitar de la orden -->
+            <div class="row justify-content-center mb-3">
+             
+              <div class="col-12">
+                <div class="bg-light text-center rounded col-6 mb-2">
+                  <h6 class="m-0 py-2">QUITAR ARTICULOS</h2>
+                </div>
+                <table class="table table-sm table-secondary">
+                  <thead>
+                    <tr>
+                      <th scope="col">CODIGO</th>
+                      <th scope="col">DESCRIPCION</th>
+                      <th scope="col">SERIE</th>
+                    </tr>
+                  </thead>
+                  <tbody class="tbodyQuitarArticulos"></tbody>
+                </table>
+           
+                <div class="col">
+                  <button class="btn btn-primary disabled" id="btnConfirmar">
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                    CONFIRMAR
+                  </button>
+                  <button class="btn btn-danger" id="btnReset">RESET</button>
+                  <button class="btn btn-secondary d-none" id="btnImprimir">IMPRIMIR</button>
+                </div>
+              </div>
+            </div>
+            <% } %>
           </div>
-          <div class="col" >
+
+          <% if (agregarArticulo) { %>
+          <div class="col-4" >
             <!-- buscar articulos -->
             <div class="row mb-3 d-none" id="buscarArticulos">
               <div class="col-6 mb-3">
@@ -128,7 +167,7 @@
               </div>
               <div class="row mb-3">
                 <div class="col-12">
-                  <table class="table table-primary">
+                  <table class="table table-sm table-primary">
                     <thead>
                       <tr>
                         <th scope="col">CODIGO</th>
@@ -136,22 +175,27 @@
                         <th scope="col">STOCK</th>
                       </tr>
                     </thead>
+                    <!-- tabla busqueda articulos -->
                     <tbody class="tbodyBuscarArticulo"></tbody>
                   </table>
                 </div>
                </div>
 
             </div>
-            <!-- tabla busqueda articulos -->
         
 
           </div>
+          <% } %>
         </div>
       </div>
     </div>
 
     <!-- JS -->
     <%- include("./partials/js.ejs") %>
-    <script src="/js/agregar_articulo_orden.js"></script>
+    <% if (agregarArticulo) { %>
+      <script src="/js/agregar_articulo_orden.js"></script>
+    <% } else { %>
+      <script src="/js/quitar_articulo_orden.js"></script>
+    <% } %>
   </body>
 </html>
