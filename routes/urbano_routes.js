@@ -25,5 +25,6 @@ router.post(
 router.post("/taller/tomar-orden", urbano.tomar_orden);
 router.post("/taller/ingresar-articulos", urbano.ingresar_articulos);
 router.post("/taller/quitar-articulos", urbano.quitar_articulos);
+router.post("/taller/salida-orden", urbano.salida_orden);
 
 module.exports = router;

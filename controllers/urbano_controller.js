@@ -91,7 +91,7 @@ exports.orden_de_reparacion = async (req, res) => {
     const query_orden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011000${number_order}"`;
     const query_cotizacion_dolar = `SELECT * FROM cotiza  WHERE codigo =  "BD"`;
     const query_articulos_en_orden = `SELECT * FROM trrenglo INNER JOIN articulo ON trrenglo.codart= articulo.codigo
-                                     WHERE trrenglo.nrocompro LIKE  "ORX0011000${number_order}"`;
+                                     WHERE trrenglo.nrocompro = "ORX0011000${number_order}"`;
     //Buscar Orden de trabajo
     let orden = await get_from_urbano(query_orden);
     if (!orden[0]) {
@@ -128,6 +128,7 @@ exports.orden_de_reparacion = async (req, res) => {
         });
       } else {
         //Orden sin articulos
+        console.log(orden[0]);
         res.render("orden_de_reparacion", {
           titulo: "Orden De Reparacion",
           orden: orden[0],
@@ -734,6 +735,55 @@ exports.quitar_articulos = async (req, res) => {
   } catch (error) {
     logger.error(
       `quitar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
+
+//salida orden
+exports.salida_orden = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico, orden } = req.body;
+    const query_salida_orden = `UPDATE trabajos SET ubicacion = 22 WHERE nrocompro = "ORX0011000${orden}"`;
+    const query_articulos_en_orden = `SELECT * FROM trrenglo INNER JOIN articulo ON trrenglo.codart= articulo.codigo
+    WHERE trrenglo.nrocompro = "ORX0011000${orden}"`;
+
+    //sacar reserva articulos
+    const articulos = await get_from_urbano(query_articulos_en_orden);
+    console.log("reserva");
+    articulos.forEach(async (articulo) => {
+      try {
+        const query_sacar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codart}`;
+        const result = await get_from_urbano(query_sacar_reserva_articulo);
+        console.log("reservassssss");
+      } catch (error) {
+        res.status(200).send({
+          titulo: "Salida Orden",
+          transaccion: false,
+        });
+      }
+    });
+
+    //Salida Orden
+    console.log("salida");
+    result = await get_from_urbano(query_salida_orden);
+
+    if (result.affectedRows) {
+      logger.info(
+        `salida_orden - ${orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+      res.status(200).send({
+        titulo: "Salida Orden",
+        transaccion: true,
+      });
+    } else {
+      res.status(200).send({
+        titulo: "Salida Orden",
+        transaccion: false,
+      });
+    }
+  } catch (error) {
+    logger.error(
+      `salida_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
 };
