@@ -128,7 +128,6 @@ exports.orden_de_reparacion = async (req, res) => {
         });
       } else {
         //Orden sin articulos
-        console.log(orden[0]);
         res.render("orden_de_reparacion", {
           titulo: "Orden De Reparacion",
           orden: orden[0],
@@ -743,14 +742,14 @@ exports.quitar_articulos = async (req, res) => {
         );
 
         res.status(400).send({
-          titulo: "Buscar serie",
+          titulo: "quitar_articulos",
           transaccion: false,
         });
       }
     });
 
     res.status(200).send({
-      titulo: "Buscar serie",
+      titulo: "quitar_articulos",
       transaccion: true,
     });
   } catch (error) {
@@ -770,13 +769,15 @@ exports.salida_orden = async (req, res) => {
 
     //sacar reserva articulos
     const articulos = await get_from_urbano(query_articulos_en_orden);
-    console.log("reserva");
     articulos.forEach(async (articulo) => {
       try {
         const query_sacar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codart}`;
         const result = await get_from_urbano(query_sacar_reserva_articulo);
-        console.log("reservassssss");
+        logger.info(`Se saca reserva articulo: ${articulo.codart}`);
       } catch (error) {
+        logger.error(
+          `salida_orden sacando reserva articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+        );
         res.status(200).send({
           titulo: "Salida Orden",
           transaccion: false,
@@ -785,7 +786,6 @@ exports.salida_orden = async (req, res) => {
     });
 
     //Salida Orden
-    console.log("salida");
     result = await get_from_urbano(query_salida_orden);
 
     if (result.affectedRows) {
@@ -797,6 +797,9 @@ exports.salida_orden = async (req, res) => {
         transaccion: true,
       });
     } else {
+      logger.info(
+        `salida_orden NO SE DIO SALIDA ORDEN:${orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
       res.status(200).send({
         titulo: "Salida Orden",
         transaccion: false,
