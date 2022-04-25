@@ -124,7 +124,6 @@ $(function () {
       data: { ingresoArticulos },
       success: function (data) {
         if (data.transaccion) {
-          console.log("ok");
           $(".spinner-border").addClass("d-none");
           buscarArticulos.addClass("d-none");
           btnConfirmar.addClass("disabled");
@@ -133,7 +132,7 @@ $(function () {
           const now = moment().format("DD-MM-YYYY / hh:mm:ss");
           $(".date").removeClass("d-none").append(`FECHA: ${now}`);
         } else {
-          console.log(`No se guardaron articulos!`);
+          alert(`No se guardaron articulos! Reportar error al administrador.`);
           $(".spinner-border").addClass("d-none");
         }
       },
@@ -167,7 +166,7 @@ function articulo_seleccionado(codigo, descripcion, trabaserie) {
 
   if (trabaserie === "S") {
     btnConfirmar.addClass("disabled");
-    let serie = prompt("Ingrese numero de serie");
+    let serie = prompt("Ingrese numero de serie").replaceAll("'","-");
     if (serie) {
       $.ajax({
         url: "/urbano/taller/buscar-serie",
@@ -175,7 +174,6 @@ function articulo_seleccionado(codigo, descripcion, trabaserie) {
         dataType: "json",
         data: { serie, codigo },
         success: function (data) {
-          console.log(data);
           if (data.serieOk) {
             btnConfirmar.removeClass("disabled");
 
