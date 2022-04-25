@@ -652,9 +652,7 @@ exports.ingresar_articulos = async (req, res) => {
       ingresoArticulos,
     } = req.body;
 
-    logger.info(
-      `ingresar_articulos - ${ingresoArticulos} - Usuario: ${codigo_tecnico} - Host: ${host}`
-    );
+    
 
     ingresoArticulos.articulos.forEach(async (articulo) => {
       try {
@@ -673,12 +671,23 @@ exports.ingresar_articulos = async (req, res) => {
         );
         const resultReserva = await get_from_urbano(query_reserva_articulo);
       } catch (error) {
+        logger.error(
+          `ingresar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+        );
         res.status(400).send({
           titulo: "ingresar articulos",
           transaccion: false,
         });
       }
     });
+
+    const datos = JSON.stringify(ingresoArticulos)
+
+    logger.info(
+      `ingresar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
+        datos: ${datos}
+      `
+    );
 
     res.status(200).send({
       titulo: "Buscar serie",
@@ -699,9 +708,7 @@ exports.quitar_articulos = async (req, res) => {
       quitarArticulos,
     } = req.body;
 
-    logger.info(
-      `quitar_articulos - ${quitarArticulos} - Usuario: ${codigo_tecnico} - Host: ${host}`
-    );
+    
 
     quitarArticulos.articulos.forEach(async (articulo) => {
       try {
@@ -720,7 +727,21 @@ exports.quitar_articulos = async (req, res) => {
         const resultReserva = await get_from_urbano(
           query_quitar_reserva_articulo
         );
+
+        const datos = JSON.stringify(quitarArticulos)
+
+
+        logger.info(
+          `quitar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
+            datos: ${datos}
+          `
+        );
+
       } catch (error) {
+        logger.error(
+          `quitar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+        );
+
         res.status(400).send({
           titulo: "Buscar serie",
           transaccion: false,
