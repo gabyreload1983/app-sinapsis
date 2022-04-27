@@ -575,7 +575,16 @@ exports.buscar_articulo = async (req, res) => {
     const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
     const { articulo } = req.query;
 
-    const query_buscar_articulo = `SELECT 
+    const query_buscar_articulo_codigo = `SELECT 
+                                            articulo.codigo AS codigo, 
+                                            articulo.descrip AS descripcion, 
+                                            (stockd01 - reserd01) AS stock,
+                                            articulo.trabaserie
+                                            FROM articulo 
+                                            INNER JOIN artstk01
+                                            ON articulo.codigo= artstk01.codigo
+                                            WHERE articulo.codigo = "${articulo}" AND (stockd01 - reserd01) > 0`;
+    const query_buscar_articulo_descripcion = `SELECT 
                                     articulo.codigo AS codigo, 
                                     articulo.descrip AS descripcion, 
                                     (stockd01 - reserd01) AS stock,
@@ -586,7 +595,10 @@ exports.buscar_articulo = async (req, res) => {
                                     WHERE articulo.descrip LIKE "%${articulo}%" AND (stockd01 - reserd01) > 0
                                     ORDER BY articulo.descrip`;
 
-    const articulos = await get_from_urbano(query_buscar_articulo);
+    let articulos = await get_from_urbano(query_buscar_articulo_codigo);
+
+    if (articulos.length === 0)
+      articulos = await get_from_urbano(query_buscar_articulo_descripcion);
 
     if (articulos.length !== 0) {
       logger.info(
@@ -597,7 +609,7 @@ exports.buscar_articulo = async (req, res) => {
         articulos: articulos,
       });
     } else {
-      res.status(200).send({
+      res.status(400).send({
         titulo: "Buscar orden",
         articulos: false,
       });
@@ -606,6 +618,10 @@ exports.buscar_articulo = async (req, res) => {
     logger.error(
       `buscar_articulo - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(400).send({
+      titulo: "Buscar orden",
+      articulos: false,
+    });
   }
 };
 
