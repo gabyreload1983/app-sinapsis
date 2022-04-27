@@ -651,51 +651,54 @@ exports.ingresar_articulos = async (req, res) => {
       ingresoArticulos,
     } = req.body;
 
-    
+    const ingresarArticulo = async (articulo, ingresoArticulos) => {
+      let query_ingresar_articulo_orden = `INSERT INTO trrenglo
+      (serie, ingreso, cliente, operador, tecnico, codart, descart, nrocompro, pendiente)
+      SELECT "${articulo.serie}", NOW(), ${ingresoArticulos.codigo}, 
+      "${ingresoArticulos.usuario}", 
+      "${ingresoArticulos.tecnico}", 
+      ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", 1
+      FROM articulo
+      WHERE codigo = ${articulo.codigo}`;
 
-    ingresoArticulos.articulos.forEach(async (articulo) => {
-      try {
-        const query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${articulo.codigo}`;
-        const query_ingresar_articulo_orden = `INSERT INTO trrenglo
-        (serie, ingreso, cliente, operador, tecnico, codart, descart, nrocompro, pendiente)
-        SELECT "${articulo.serie}", NOW(), ${ingresoArticulos.codigo}, 
-        "${ingresoArticulos.usuario}", 
-        "${ingresoArticulos.tecnico}", 
-        ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", 1
-        FROM articulo
-        WHERE codigo = ${articulo.codigo}`;
+      return await get_from_urbano(query_ingresar_articulo_orden);
+    };
 
-        const resultIngresar = await get_from_urbano(
-          query_ingresar_articulo_orden
-        );
-        const resultReserva = await get_from_urbano(query_reserva_articulo);
-      } catch (error) {
-        logger.error(
-          `ingresar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
-        );
-        res.status(400).send({
-          titulo: "ingresar articulos",
-          transaccion: false,
-        });
-      }
-    });
+    const reservaArticulo = async (articulo) => {
+      let query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${articulo.codigo}`;
+      return await get_from_urbano(query_reserva_articulo);
+    };
 
-    const datos = JSON.stringify(ingresoArticulos)
+    for (const articulo of ingresoArticulos.articulos) {
+      const result = await ingresarArticulo(articulo, ingresoArticulos);
+      logger.info(`Ingreso ${articulo.codigo} - ${result.affectedRows}`);
+    }
+
+    for (const articulo of ingresoArticulos.articulos) {
+      const result = await reservaArticulo(articulo);
+      logger.info(`Reserva ${articulo.codigo} - ${result.affectedRows}`);
+    }
+
+    const datos = JSON.stringify(ingresoArticulos);
 
     logger.info(
       `ingresar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
         datos: ${datos}
-      `
+        `
     );
 
     res.status(200).send({
-      titulo: "Buscar serie",
+      titulo: "ingresar_articulos",
       transaccion: true,
     });
   } catch (error) {
     logger.error(
       `ingresar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(400).send({
+      titulo: "ingresar_articulos",
+      transaccion: false,
+    });
   }
 };
 
@@ -707,46 +710,39 @@ exports.quitar_articulos = async (req, res) => {
       quitarArticulos,
     } = req.body;
 
-    
+    const sacarArticulo = async (articulo, quitarArticulos) => {
+      let query_quitar_articulo_orden = `UPDATE trrenglo SET 
+      serie="", ingreso="", cliente="", operador="", tecnico="", codart="", descart="", nrocompro="", pendiente=""
+      WHERE  cliente = ${quitarArticulos.codigo} AND 
+      codart= ${articulo.codigo} AND 
+      nrocompro = "${quitarArticulos.orden}" AND 
+      serie = "${articulo.serie}" 
+      LIMIT 1`;
 
-    quitarArticulos.articulos.forEach(async (articulo) => {
-      try {
-        const query_quitar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codigo}`;
-        const query_quitar_articulo_orden = `UPDATE trrenglo SET 
-            serie="", ingreso="", cliente="", operador="", tecnico="", codart="", descart="", nrocompro="", pendiente=""
-            WHERE  cliente = ${quitarArticulos.codigo} AND 
-            codart= ${articulo.codigo} AND 
-            nrocompro = "${quitarArticulos.orden}" AND 
-            serie = "${articulo.serie}" 
-            LIMIT 1`;
+      return await get_from_urbano(query_quitar_articulo_orden);
+    };
 
-        const resultIngresar = await get_from_urbano(
-          query_quitar_articulo_orden
-        );
-        const resultReserva = await get_from_urbano(
-          query_quitar_reserva_articulo
-        );
+    const sacarReservaArticulo = async (articulo) => {
+      let query_quitar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codigo}`;
+      return await get_from_urbano(query_quitar_reserva_articulo);
+    };
 
-        const datos = JSON.stringify(quitarArticulos)
+    for (const articulo of quitarArticulos.articulos) {
+      const result = await sacarArticulo(articulo, quitarArticulos);
+      logger.info(`Sacar ${articulo.codigo} - ${result.affectedRows}`);
+    }
 
+    for (const articulo of quitarArticulos.articulos) {
+      const result = await sacarReservaArticulo(articulo);
+      logger.info(`Sacar Reserva ${articulo.codigo} - ${result.affectedRows}`);
+    }
 
-        logger.info(
-          `quitar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
-            datos: ${datos}
-          `
-        );
-
-      } catch (error) {
-        logger.error(
-          `quitar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
-        );
-
-        res.status(400).send({
-          titulo: "quitar_articulos",
-          transaccion: false,
-        });
-      }
-    });
+    const datos = JSON.stringify(quitarArticulos);
+    logger.info(
+      `quitar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
+              datos: ${datos}
+            `
+    );
 
     res.status(200).send({
       titulo: "quitar_articulos",
@@ -756,6 +752,10 @@ exports.quitar_articulos = async (req, res) => {
     logger.error(
       `quitar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(400).send({
+      titulo: "quitar_articulos",
+      transaccion: false,
+    });
   }
 };
 
@@ -764,26 +764,31 @@ exports.salida_orden = async (req, res) => {
   try {
     const { host, codigo_tecnico_log: codigo_tecnico, orden } = req.body;
     const query_salida_orden = `UPDATE trabajos SET ubicacion = 22 WHERE nrocompro = "ORX0011000${orden}"`;
+
     const query_articulos_en_orden = `SELECT * FROM trrenglo INNER JOIN articulo ON trrenglo.codart= articulo.codigo
     WHERE trrenglo.nrocompro = "ORX0011000${orden}"`;
 
-    //sacar reserva articulos
-    const articulos = await get_from_urbano(query_articulos_en_orden);
-    articulos.forEach(async (articulo) => {
-      try {
-        const query_sacar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codart}`;
-        const result = await get_from_urbano(query_sacar_reserva_articulo);
-        logger.info(`Se saca reserva articulo: ${articulo.codart}`);
-      } catch (error) {
-        logger.error(
-          `salida_orden sacando reserva articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    const articulosEnOrden = await get_from_urbano(query_articulos_en_orden);
+
+    logger.info(
+      `Inicio >>> Salida orden ${orden} - ${
+        articulosEnOrden.length === 0 ? "Sin articulos" : "Con articulos"
+      }`
+    );
+
+    if (articulosEnOrden.length !== 0) {
+      const sacarReservaArticulo = async (articulo) => {
+        let query_sacar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codart}`;
+        return await get_from_urbano(query_sacar_reserva_articulo);
+      };
+
+      for (const articulo of articulosEnOrden) {
+        const result = await sacarReservaArticulo(articulo);
+        logger.info(
+          `Sacar reserva ${articulo.codigo} - affectedRows: ${result.affectedRows}`
         );
-        res.status(200).send({
-          titulo: "Salida Orden",
-          transaccion: false,
-        });
       }
-    });
+    }
 
     //Salida Orden
     result = await get_from_urbano(query_salida_orden);
@@ -809,5 +814,9 @@ exports.salida_orden = async (req, res) => {
     logger.error(
       `salida_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(400).send({
+      titulo: "Salida Orden",
+      transaccion: false,
+    });
   }
 };
