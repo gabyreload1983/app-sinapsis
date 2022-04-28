@@ -686,13 +686,10 @@ exports.ingresar_articulos = async (req, res) => {
     };
 
     for (const articulo of ingresoArticulos.articulos) {
-      const result = await ingresarArticulo(articulo, ingresoArticulos);
-      logger.info(`Ingreso ${articulo.codigo} - ${result.affectedRows}`);
-    }
-
-    for (const articulo of ingresoArticulos.articulos) {
-      const result = await reservaArticulo(articulo);
-      logger.info(`Reserva ${articulo.codigo} - ${result.affectedRows}`);
+      const ingreso = await ingresarArticulo(articulo, ingresoArticulos);
+      logger.info(`Ingreso ${articulo.codigo} - ${ingreso.affectedRows}`);
+      const reserva = await reservaArticulo(articulo);
+      logger.info(`Reserva ${articulo.codigo} - ${reserva.affectedRows}`);
     }
 
     const datos = JSON.stringify(ingresoArticulos);
@@ -744,13 +741,10 @@ exports.quitar_articulos = async (req, res) => {
     };
 
     for (const articulo of quitarArticulos.articulos) {
-      const result = await sacarArticulo(articulo, quitarArticulos);
-      logger.info(`Sacar ${articulo.codigo} - ${result.affectedRows}`);
-    }
-
-    for (const articulo of quitarArticulos.articulos) {
-      const result = await sacarReservaArticulo(articulo);
-      logger.info(`Sacar Reserva ${articulo.codigo} - ${result.affectedRows}`);
+      const sacar = await sacarArticulo(articulo, quitarArticulos);
+      logger.info(`Sacar ${articulo.codigo} - ${sacar.affectedRows}`);
+      const reserva = await sacarReservaArticulo(articulo);
+      logger.info(`Sacar Reserva ${articulo.codigo} - ${reserva.affectedRows}`);
     }
 
     const datos = JSON.stringify(quitarArticulos);
