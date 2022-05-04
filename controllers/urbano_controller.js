@@ -3,6 +3,9 @@ const connection_tickets = require("../conexion/dbTickets");
 const constantes = require("../constantes/constantes");
 const moment = require("moment");
 const logger = require("../logger/logger");
+const PDF = require("pdfkit");
+const fs = require("fs");
+const { path } = require("pdfkit");
 
 //Home Page
 exports.index = (req, res) => {
@@ -693,6 +696,45 @@ exports.ingresar_articulos = async (req, res) => {
     }
 
     const datos = JSON.stringify(ingresoArticulos);
+    let articulos = "";
+    for (let articulo of ingresoArticulos.articulos) {
+      articulos =
+        articulos +
+        `
+      ${articulo.codigo} - ${articulo.descripcion} - SERIE: ${articulo.serie}`;
+    }
+
+    let now = new Date();
+    let nowId = moment(now).format("YYYY-MM-DD-HHmmss");
+    now = moment(now).format("DD-MM-YYYY HH:mm:ss");
+    const id = `${nowId}-${ingresoArticulos.orden}`;
+    const filename = `${id}-IN.pdf`;
+
+    //crear pdf
+    const doc = new PDF();
+
+    doc.image("./public/images/logo-sinapsis.png", 0, 20, {
+      width: 600,
+      align: "center",
+    });
+
+    doc.text(
+      `INGRESO ARTICULOS - FECHA: ${now}
+
+       ORDEN: ${ingresoArticulos.orden}
+       CODIGO: ${ingresoArticulos.codigo}
+       CLIENTE: ${ingresoArticulos.cliente}
+       TECNICO: ${ingresoArticulos.tecnico}
+       USUARIO: ${ingresoArticulos.usuario}
+
+       ARTICULOS INGRESADOS: ${articulos}
+      `,
+      30,
+      150
+    );
+
+    doc.pipe(fs.createWriteStream(`./public/pdf/in/${filename}`));
+    doc.end();
 
     logger.info(
       `ingresar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
@@ -703,6 +745,7 @@ exports.ingresar_articulos = async (req, res) => {
     res.status(200).send({
       titulo: "ingresar_articulos",
       transaccion: true,
+      transcaccionId: id,
     });
   } catch (error) {
     logger.error(
@@ -748,6 +791,46 @@ exports.quitar_articulos = async (req, res) => {
     }
 
     const datos = JSON.stringify(quitarArticulos);
+    let articulos = "";
+    for (let articulo of quitarArticulos.articulos) {
+      articulos =
+        articulos +
+        `
+      ${articulo.codigo} - ${articulo.descripcion} - SERIE: ${articulo.serie}`;
+    }
+
+    let now = new Date();
+    let nowId = moment(now).format("YYYY-MM-DD-HHmmss");
+    now = moment(now).format("DD-MM-YYYY HH:mm:ss");
+    const id = `${nowId}-${quitarArticulos.orden}`;
+    const filename = `${id}-OUT.pdf`;
+
+    //crear pdf
+    const doc = new PDF();
+
+    doc.image("./public/images/logo-sinapsis.png", 0, 20, {
+      width: 600,
+      align: "center",
+    });
+
+    doc.text(
+      `QUITAR ARTICULOS - FECHA: ${now}
+
+       ORDEN: ${quitarArticulos.orden}
+       CODIGO: ${quitarArticulos.codigo}
+       CLIENTE: ${quitarArticulos.cliente}
+       TECNICO: ${quitarArticulos.tecnico}
+       USUARIO: ${quitarArticulos.usuario}
+
+       ARTICULOS QUITADOS: ${articulos}
+      `,
+      30,
+      150
+    );
+
+    doc.pipe(fs.createWriteStream(`./public/pdf/out/${filename}`));
+    doc.end();
+
     logger.info(
       `quitar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
               datos: ${datos}
@@ -757,6 +840,7 @@ exports.quitar_articulos = async (req, res) => {
     res.status(200).send({
       titulo: "quitar_articulos",
       transaccion: true,
+      transcaccionId: id,
     });
   } catch (error) {
     logger.error(

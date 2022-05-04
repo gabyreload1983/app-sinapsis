@@ -166,7 +166,7 @@ function articulo_seleccionado(codigo, descripcion, trabaserie) {
 
   if (trabaserie === "S") {
     btnConfirmar.addClass("disabled");
-    let serie = prompt("Ingrese numero de serie").replaceAll("'","-");
+    let serie = prompt("Ingrese numero de serie").replaceAll("'", "-");
     if (serie) {
       $.ajax({
         url: "/urbano/taller/buscar-serie",

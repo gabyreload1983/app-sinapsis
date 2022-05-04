@@ -2,4 +2,5 @@
 /config/development.json
 /config/testing.json
 /logger/files
+/public/pdf
 package-lock.json
