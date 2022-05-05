@@ -3,9 +3,9 @@ const connection_tickets = require("../conexion/dbTickets");
 const constantes = require("../constantes/constantes");
 const moment = require("moment");
 const logger = require("../logger/logger");
-const PDF = require("pdfkit");
+const PDF = require("pdfkit-construct");
 const fs = require("fs");
-const { path } = require("pdfkit");
+// const { path } = require("pdfkit");
 
 //Home Page
 exports.index = (req, res) => {
@@ -696,12 +696,9 @@ exports.ingresar_articulos = async (req, res) => {
     }
 
     const datos = JSON.stringify(ingresoArticulos);
-    let articulos = "";
+    let articulos = [];
     for (let articulo of ingresoArticulos.articulos) {
-      articulos =
-        articulos +
-        `
-      ${articulo.codigo} - ${articulo.descripcion} - SERIE: ${articulo.serie}`;
+      articulos.push(articulo);
     }
 
     let now = new Date();
@@ -710,30 +707,76 @@ exports.ingresar_articulos = async (req, res) => {
     const id = `${nowId}-${ingresoArticulos.orden}`;
     const filename = `${id}-IN.pdf`;
 
+    const cabecera = [
+      {
+        orden: `${ingresoArticulos.orden}`,
+        tecnico: `${ingresoArticulos.tecnico}`,
+      },
+    ];
     //crear pdf
     const doc = new PDF();
 
-    doc.image("./public/images/logo-sinapsis.png", 0, 20, {
-      width: 600,
-      align: "center",
+    doc.setDocumentHeader({ height: "20" }, () => {
+      doc.image("./public/images/sinapsis.jpg", 5, 20, {
+        width: 300,
+      });
+      doc.fontSize(24).text("I", 300, 80);
+      doc.fontSize(10).text(`FECHA: ${now}`, 400, 80);
+      doc.fontSize(12).text(`USUARIO: ${ingresoArticulos.usuario}`, 400, 100);
+      doc
+        .fontSize(14)
+        .text(
+          `${ingresoArticulos.codigo} - ${ingresoArticulos.cliente}`,
+          60,
+          130
+        );
     });
 
-    doc.text(
-      `INGRESO ARTICULOS - FECHA: ${now}
-
-       ORDEN: ${ingresoArticulos.orden}
-       CODIGO: ${ingresoArticulos.codigo}
-       CLIENTE: ${ingresoArticulos.cliente}
-       TECNICO: ${ingresoArticulos.tecnico}
-       USUARIO: ${ingresoArticulos.usuario}
-
-       ARTICULOS INGRESADOS: ${articulos}
-      `,
-      30,
-      150
+    doc.addTable(
+      [
+        { key: "orden", label: "Nro Orden", align: "left" },
+        { key: "tecnico", label: "Tecnico", align: "left" },
+      ],
+      cabecera,
+      {
+        border: null,
+        width: "fill_body",
+        striped: true,
+        stripedColors: ["#f6f6f6", "#d6c4dd"],
+        cellsPadding: 10,
+        marginTop: 100,
+        marginLeft: 45,
+        marginRight: 45,
+        headAlign: "left",
+        marginBottom: 70,
+      }
     );
 
-    doc.pipe(fs.createWriteStream(`./public/pdf/in/${filename}`));
+    doc.fontSize(14).text("ARTICULOS INGRESADOS", 70, 270);
+
+    doc.addTable(
+      [
+        { key: "codigo", label: "Codigo", align: "left" },
+        { key: "descripcion", label: "Descripcion", align: "left" },
+        { key: "serie", label: "Serie", align: "left" },
+      ],
+      articulos,
+      {
+        border: null,
+        width: "fill_body",
+        striped: true,
+        stripedColors: ["#f6f6f6", "#d6c4dd"],
+        cellsPadding: 5,
+        marginTop: 100,
+        marginLeft: 45,
+        marginRight: 45,
+        headAlign: "left",
+      }
+    );
+
+    doc.render();
+
+    doc.pipe(fs.createWriteStream(`./public/pdf/${filename}`));
     doc.end();
 
     logger.info(
@@ -790,13 +833,11 @@ exports.quitar_articulos = async (req, res) => {
       logger.info(`Sacar Reserva ${articulo.codigo} - ${reserva.affectedRows}`);
     }
 
+    //FORMATEAR INFO
     const datos = JSON.stringify(quitarArticulos);
-    let articulos = "";
+    let articulos = [];
     for (let articulo of quitarArticulos.articulos) {
-      articulos =
-        articulos +
-        `
-      ${articulo.codigo} - ${articulo.descripcion} - SERIE: ${articulo.serie}`;
+      articulos.push(articulo);
     }
 
     let now = new Date();
@@ -805,30 +846,77 @@ exports.quitar_articulos = async (req, res) => {
     const id = `${nowId}-${quitarArticulos.orden}`;
     const filename = `${id}-OUT.pdf`;
 
+    const cabecera = [
+      {
+        orden: `${quitarArticulos.orden}`,
+        tecnico: `${quitarArticulos.tecnico}`,
+      },
+    ];
+
     //crear pdf
     const doc = new PDF();
 
-    doc.image("./public/images/logo-sinapsis.png", 0, 20, {
-      width: 600,
-      align: "center",
+    doc.setDocumentHeader({ height: "20" }, () => {
+      doc.image("./public/images/sinapsis.jpg", 5, 20, {
+        width: 300,
+      });
+      doc.fontSize(24).text("E", 300, 80);
+      doc.fontSize(10).text(`FECHA: ${now}`, 400, 80);
+      doc.fontSize(12).text(`USUARIO: ${quitarArticulos.usuario}`, 400, 100);
+      doc
+        .fontSize(14)
+        .text(
+          `${quitarArticulos.codigo} - ${quitarArticulos.cliente}`,
+          60,
+          130
+        );
     });
 
-    doc.text(
-      `QUITAR ARTICULOS - FECHA: ${now}
-
-       ORDEN: ${quitarArticulos.orden}
-       CODIGO: ${quitarArticulos.codigo}
-       CLIENTE: ${quitarArticulos.cliente}
-       TECNICO: ${quitarArticulos.tecnico}
-       USUARIO: ${quitarArticulos.usuario}
-
-       ARTICULOS QUITADOS: ${articulos}
-      `,
-      30,
-      150
+    doc.addTable(
+      [
+        { key: "orden", label: "Nro Orden", align: "left" },
+        { key: "tecnico", label: "Tecnico", align: "left" },
+      ],
+      cabecera,
+      {
+        border: null,
+        width: "fill_body",
+        striped: true,
+        stripedColors: ["#f6f6f6", "#d6c4dd"],
+        cellsPadding: 10,
+        marginTop: 100,
+        marginLeft: 45,
+        marginRight: 45,
+        headAlign: "left",
+        marginBottom: 70,
+      }
     );
 
-    doc.pipe(fs.createWriteStream(`./public/pdf/out/${filename}`));
+    doc.fontSize(14).text("ARTICULOS QUITADOS", 70, 270);
+
+    doc.addTable(
+      [
+        { key: "codigo", label: "Codigo", align: "left" },
+        { key: "descripcion", label: "Descripcion", align: "left" },
+        { key: "serie", label: "Serie", align: "left" },
+      ],
+      articulos,
+      {
+        border: null,
+        width: "fill_body",
+        striped: true,
+        stripedColors: ["#f6f6f6", "#d6c4dd"],
+        cellsPadding: 5,
+        marginTop: 100,
+        marginLeft: 45,
+        marginRight: 45,
+        headAlign: "left",
+      }
+    );
+
+    doc.render();
+
+    doc.pipe(fs.createWriteStream(`./public/pdf/${filename}`));
     doc.end();
 
     logger.info(
