@@ -14,33 +14,7 @@
 
     <!-- JS -->
     <%- include("./partials/js.ejs") %>
-    <script>
-      $(function () {
-        const btn_guardar_diagnostico = $(".btn_guardar_diagnostico");
-        const form_diagnostico = $(".form_diagnostico");
-
-        form_diagnostico.on("submit", function (e) {
-          e.preventDefault();
-          const orden = this.id;
-          const diagnostico = $("#diagnostico" + orden).val();
-
-          if (diagnostico) {
-            $.ajax({
-              url: "/urbano/taller/guardar-diagnostico-orden",
-              type: "post",
-              dataType: "json",
-              data: { orden, diagnostico },
-              success: function (data) {
-                if (data) {
-                  const response = confirm(`Diagnostico guardado!`);
-                } else {
-                  console.log("No se guardo diagnostico.");
-                }
-              },
-            });
-          }
-        });
-      });
-    </script>
+    <script src="/js/guardar_diagnostico.js"></script>
+    <script src="/js/cerrar_orden.js"></script>
   </body>
 </html>

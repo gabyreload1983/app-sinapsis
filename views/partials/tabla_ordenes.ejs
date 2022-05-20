@@ -105,6 +105,10 @@
             Tomar
           </button>
 
+          <% } %> <% if (orden.estado === "En Proceso") { %>
+          <button class="btn btn-danger btn_cerrar" id="<%= orden.nrocompro%>">
+            Cerrar
+          </button>
           <% } %>
         </div>
       </div>

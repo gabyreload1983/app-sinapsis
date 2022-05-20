@@ -999,3 +999,40 @@ exports.salida_orden = async (req, res) => {
     });
   }
 };
+
+//Cerrar orden
+exports.cerrar_orden = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico, orden } = req.body;
+    const query_cerrar_orden = `UPDATE trabajos SET estado = 23 WHERE nrocompro = "ORX0011000${orden}"`;
+
+    const result = await get_from_urbano(query_cerrar_orden);
+
+    if (result.affectedRows) {
+      logger.info(
+        `cerrar_orden - ${orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+      res.status(200).send({
+        titulo: "Cerrar Orden",
+        transaccion: true,
+        orden,
+      });
+    } else {
+      logger.info(
+        `cerrar_orden NO SE CERRO ORDEN:${orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+      res.status(200).send({
+        titulo: "Cerrar Orden",
+        transaccion: false,
+      });
+    }
+  } catch (error) {
+    logger.error(
+      `cerrar_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+    res.status(400).send({
+      titulo: "Cerrar Orden",
+      transaccion: false,
+    });
+  }
+};
