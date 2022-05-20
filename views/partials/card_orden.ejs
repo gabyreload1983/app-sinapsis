@@ -1,61 +1,43 @@
 <div class="card">
   <div class="card-header prioridad<%= orden.prioridad %>">
-    <h2><%= orden.codigo %> - <%= orden.nombre %></h2>
+    <h2>ORDEN: <%= orden.nrocompro %></h2>
+    <h3><%= orden.codigo %> - <%= orden.nombre %></h3>
   </div>
   <div class="card-body">
+    <!--  -->
     <ul class="list-group list-group-flush">
-      <li class="list-group-item bg-light">Orden: <%= orden.nrocompro %></li>
-      <li class="list-group-item bg-light">Producto: <%= orden.descart %></li>
-      <li class="list-group-item bg-light">
-        Falla:
-        <div class="form-diagnostico">
-          <textarea
-            class="form-control"
-            id="falla_<%= orden.nrocompro %>"
-            style="height: 100px"
-            disabled
-          >
-<%= orden.falla %>
-          </textarea>
-        </div>
+      <li class="list-group-item bg-light text-uppercase">
+        Estado: <%= orden.estado %>
       </li>
-      <li class="list-group-item bg-light">Diagnostico: <%= orden.diag %></li>
-      <li class="list-group-item bg-light">
-        Diagnostico tecnico:
-        <div class="form-diagnostico">
-          <textarea
-            class="form-control"
-            id="diagnostico_<%= orden.nrocompro %>"
-            style="height: 100px"
-          >
-<%= orden.diagnostico %></textarea
-          >
-        </div>
+      <li class="list-group-item bg-light text-uppercase">
+        Diagnostico: <%= orden.diag %>
       </li>
-      <li class="list-group-item <%= orden.bgDescription %>">
+      <li class="list-group-item bg-light text-uppercase">
         Ubicacion: <%= orden.ubicacion %>
       </li>
-      <li class="list-group-item bg-light">
-        Fecha de ingreso: <%= orden.ingresado %>
+      <li class="list-group-item bg-light text-uppercase">
+        Prioridad: <%= orden.prioridad %>
       </li>
 
       <li class="list-group-item bg-light">
-        Telefono:
+        TELEFONO:
         <a
           target="_blank"
           href="whatsapp://send/?phone=<%= orden.telefono %>&text=Hola, nos comunicamos de Sinapsis SRL..."
-          ><%= orden.telefono %></a
         >
+          <%= orden.telefono %>
+        </a>
       </li>
-      <li class="list-group-item bg-light">Sector: <%= orden.codiart %></li>
+      <li class="list-group-item bg-light">ARTICULO: <%= orden.descart %></li>
+      <li class="list-group-item bg-light">FALLA: <%= orden.falla %></li>
       <li class="list-group-item bg-light">
-        Accesorios: <%= orden.accesorios %>
+        ACCESORIOS: <%= orden.accesorios %>
       </li>
+
+      <!-- DIAGNOSTICO -->
       <li class="list-group-item bg-light">
-        Prioridad: <%= orden.prioridad %>
+        DIAGNOSTICO TECNICO: <%= orden.diagnostico %>
       </li>
-      <li class="list-group-item bg-light">Tecnico: <%= orden.tecnico %></li>
-      <li class="list-group-item bg-light">Costo: $<%= orden.costo %></li>
     </ul>
   </div>
 </div>
