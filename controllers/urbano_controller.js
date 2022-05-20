@@ -89,7 +89,7 @@ exports.orden_de_reparacion = async (req, res) => {
     const number_order = req.query.orden;
 
     logger.info(
-      `orden_de_reparacion ${number_orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      `orden_de_reparacion ${number_order} - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
     const query_orden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011000${number_order}"`;
