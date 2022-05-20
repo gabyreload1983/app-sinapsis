@@ -86,11 +86,12 @@ exports.orden_de_reparacion = async (req, res) => {
   try {
     const codigo_tecnico = req.body.codigo_tecnico_log;
     const host = req.body.host;
+    const number_order = req.query.orden;
+
     logger.info(
-      `orden_de_reparacion - Usuario: ${codigo_tecnico} - Host: ${host}`
+      `orden_de_reparacion ${number_orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
     );
 
-    const number_order = req.query.orden;
     const query_orden = `SELECT * FROM trabajos WHERE nrocompro LIKE "ORX0011000${number_order}"`;
     const query_cotizacion_dolar = `SELECT * FROM cotiza  WHERE codigo =  "BD"`;
     const query_articulos_en_orden = `SELECT * FROM trrenglo INNER JOIN articulo ON trrenglo.codart= articulo.codigo
@@ -780,9 +781,7 @@ exports.ingresar_articulos = async (req, res) => {
     doc.end();
 
     logger.info(
-      `ingresar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
-        datos: ${datos}
-        `
+      `ingresar_articulos - Usuario: ${codigo_tecnico} - Host: ${host} datos: ${datos}`
     );
 
     res.status(200).send({
@@ -920,9 +919,7 @@ exports.quitar_articulos = async (req, res) => {
     doc.end();
 
     logger.info(
-      `quitar_articulos - Usuario: ${codigo_tecnico} - Host: ${host}
-              datos: ${datos}
-            `
+      `quitar_articulos - Usuario: ${codigo_tecnico} - Host: ${host} datos: ${datos}`
     );
 
     res.status(200).send({
