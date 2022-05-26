@@ -106,8 +106,17 @@
           </button>
 
           <% } %> <% if (orden.estado === "En Proceso") { %>
-          <button class="btn btn-danger btn_cerrar" id="<%= orden.nrocompro%>">
-            Cerrar
+          <button
+            class="btn btn-success btn_cerrar d-none"
+            id="<%= orden.nrocompro%>-reparada"
+          >
+            REPARADA
+          </button>
+          <button
+            class="btn btn-danger btn_cerrar d-none"
+            id="<%= orden.nrocompro%>-sinReparacion"
+          >
+            SIN REPARACION
           </button>
           <% } %>
         </div>
