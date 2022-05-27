@@ -98,25 +98,28 @@
             </div>
           </div>
         </div>
-        <div class="col-1">
+        <div class="col-2">
           <% if(tomar){ %>
 
-          <button class="btn btn-primary btn_tomar" id="<%= orden.nrocompro%>">
+          <button
+            class="btn btn-primary btn-sm btn_tomar"
+            id="<%= orden.nrocompro%>"
+          >
             Tomar
           </button>
 
           <% } %> <% if (orden.estado === "En Proceso") { %>
           <button
-            class="btn btn-success btn_cerrar d-none"
-            id="<%= orden.nrocompro%>-reparada"
+            class="btn btn-success btn-sm btn-cerrar"
+            id="<%= orden.nrocompro%>-cerrar"
           >
-            REPARADA
+            Cerrar
           </button>
           <button
-            class="btn btn-danger btn_cerrar d-none"
+            class="btn btn-danger btn-sm btn-sin-reparacion"
             id="<%= orden.nrocompro%>-sinReparacion"
           >
-            SIN REPARACION
+            Sin Reparacion
           </button>
           <% } %>
         </div>
