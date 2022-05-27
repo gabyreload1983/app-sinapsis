@@ -673,13 +673,13 @@ exports.ingresar_articulos = async (req, res) => {
 
     const ingresarArticulo = async (articulo, ingresoArticulos) => {
       let query_ingresar_articulo_orden = `INSERT INTO trrenglo
-      (serie, ingreso, cliente, operador, tecnico, codart, descart, nrocompro, pendiente)
-      SELECT "${articulo.serie}", NOW(), ${ingresoArticulos.codigo}, 
-      "${ingresoArticulos.usuario}", 
-      "${ingresoArticulos.tecnico}", 
-      ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", 1
-      FROM articulo
-      WHERE codigo = ${articulo.codigo}`;
+      (serie, ingreso, festado, asignado, fdiag, cliente, operador, falla, tecnico, codart, descart, nrocompro, seguridad, costo, pendiente, tipo, sector, diag )
+            SELECT "${articulo.serie}", NOW(), NOW(), NOW(), NOW(), ${ingresoArticulos.codigo}, 
+            "${ingresoArticulos.usuario}", "FALLA", 
+            "${ingresoArticulos.tecnico}", 
+            ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", "MOSTRADORGABYT", 0, 1, "ST", "E", "RE"
+            FROM articulo
+            WHERE codigo = ${articulo.codigo}`;
 
       return await get_from_urbano(query_ingresar_articulo_orden);
     };
@@ -810,7 +810,7 @@ exports.quitar_articulos = async (req, res) => {
 
     const sacarArticulo = async (articulo, quitarArticulos) => {
       let query_quitar_articulo_orden = `UPDATE trrenglo SET 
-      serie="", ingreso="", cliente="", operador="", tecnico="", codart="", descart="", nrocompro="", pendiente=""
+      tipo="", sector="", diag="", serie="", ingreso="", festado="", asignado="", fdiag="", egreso="", cliente="", operador="", falla="", tecnico="", codart="", descart="", nrocompro="", seguridad="", costo="", pendiente=""
       WHERE  cliente = ${quitarArticulos.codigo} AND 
       codart= ${articulo.codigo} AND 
       nrocompro = "${quitarArticulos.orden}" AND 
