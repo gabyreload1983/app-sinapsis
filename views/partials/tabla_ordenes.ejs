@@ -66,16 +66,21 @@
 
                   <!-- DIAGNOSTICO -->
                   <li class="list-group-item bg-light">
-                    DIAGNOSTICO TECNICO:
+                   
                     <form class="form_diagnostico" id="<%= orden.nrocompro %>">
-                      <div class="mb-3">
+                      <div class="mb-3 border border-primary p-2 rounded">
+                        <label for="diagnostico<%= orden.nrocompro %>">DIAGNOSTICO TECNICO:</label>
                         <textarea
-                          class="form-control"
+                          class="form-control mb-2"
                           name="diagnostico"
                           id="diagnostico<%= orden.nrocompro %>"
                         >
 <%= orden.diagnostico %></textarea
                         >
+                        <label for="manoDeObra<%= orden.nrocompro %>">MANO DE OBRA</label>
+                        <input value="<%= orden.costo %>" type="number" class="list-group-item bg-light" id="manoDeObra<%= orden.nrocompro %>">
+                         
+                      </input>
                       </div>
 
                       <button
@@ -86,19 +91,14 @@
                       </button>
                     </form>
                   </li>
-                  <li class="list-group-item bg-light">
-                    MANO DE OBRA: $<%= orden.costo %>
-                  </li>
-                  <li class="list-group-item bg-light">
-                    TOTAL: $<%= orden.total %>
-                  </li>
+               
                   <li class="list-group-item bg-light"></li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-2">
+        <div class="col-3">
           <% if(tomar){ %>
 
           <button

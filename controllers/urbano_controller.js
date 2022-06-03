@@ -467,15 +467,16 @@ exports.mis_ordenes_tomadas = async (req, res) => {
 exports.guardar_diagnostico_orden = async (req, res) => {
   try {
     const codigo_tecnico = req.body.codigo_tecnico_log.toUpperCase();
-    const { host, orden, diagnostico } = req.body;
+    const { host, orden, diagnostico, costo } = req.body;
 
-    const query_actualizar_diagnostico = `UPDATE trabajos SET diagnostico = "${diagnostico}" WHERE nrocompro= "ORX0011000${orden}"`;
+    const query_actualizar_diagnostico = `UPDATE trabajos SET diagnostico = "${diagnostico}", costo = ${costo}, pendiente = ${costo} 
+                                              WHERE nrocompro= "ORX0011000${orden}"`;
 
     const result = await get_from_urbano(query_actualizar_diagnostico);
 
     if (result.affectedRows !== 0) {
       logger.info(
-        `guardar_diagnostico_orden - Se guardo diagnostico - Usuario: ${codigo_tecnico} - Host: ${host}`
+        `guardar_diagnostico_orden - Se guardo diagnostico - costo: ${costo} Usuario: ${codigo_tecnico} - Host: ${host}`
       );
       res.status(200).send(result);
     } else {
@@ -491,7 +492,7 @@ exports.guardar_diagnostico_orden = async (req, res) => {
   }
 };
 
-// agregar articulo en orden
+// agregar articulo en orden VIEW
 exports.agregar_articulo_orden = async (req, res) => {
   try {
     const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
@@ -511,7 +512,7 @@ exports.agregar_articulo_orden = async (req, res) => {
   }
 };
 
-// agregar articulo en orden
+// agregar articulo en orden VIEW
 exports.quitar_articulo_orden = async (req, res) => {
   try {
     const { host, codigo_tecnico_log: codigo_tecnico } = req.body;

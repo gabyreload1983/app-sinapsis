@@ -6,13 +6,14 @@ $(function () {
     e.preventDefault();
     const orden = this.id;
     const diagnostico = $("#diagnostico" + orden).val();
+    const costo = $("#manoDeObra" + orden).val();
 
     if (diagnostico) {
       $.ajax({
         url: "/urbano/taller/guardar-diagnostico-orden",
         type: "post",
         dataType: "json",
-        data: { orden, diagnostico },
+        data: { orden, diagnostico, costo },
         success: function (data) {
           if (data) {
             confirm(`Diagnostico guardado!`);
