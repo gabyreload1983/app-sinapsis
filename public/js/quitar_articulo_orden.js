@@ -92,15 +92,17 @@ $(function () {
       data: { quitarArticulos },
       success: function (data) {
         if (data.transaccion) {
-          console.log("ok");
+          $(".btn-group").append(`
+          <a class="btn btn-secondary btn-pdf" href="/urbano/taller/buscar-ingreso-egreso-articulos/${data.id}">PDF</a>
+          `);
           $(".spinner-border").addClass("d-none");
+          buscarArticulos.addClass("d-none");
           btnConfirmar.addClass("disabled");
-          btnReset.addClass("disabled");
-          btnImprimir.removeClass("d-none");
+
           const now = moment().format("DD-MM-YYYY / hh:mm:ss");
           $(".date").removeClass("d-none").append(`FECHA: ${now}`);
         } else {
-          console.log(`No se quitaron articulos!`);
+          alert(`No se quitaron articulos! Reportar error al administrador.`);
           $(".spinner-border").addClass("d-none");
         }
       },
@@ -115,15 +117,8 @@ $(function () {
     $(".spinner-border").addClass("d-none");
     $(".date").empty().addClass("d-none");
     btnConfirmar.addClass("disabled");
-    btnImprimir.addClass("d-none");
     buscarArticulos.addClass("d-none");
-  });
-
-  btnImprimir.on("click", function () {
-    $(".tbodyBuscarArticulo").empty();
-    btnConfirmar.addClass("disabled");
-    btnReset.removeClass("disabled");
-    window.print();
+    $(".btn-pdf").addClass("d-none");
   });
 });
 
@@ -143,46 +138,3 @@ function quitarArticulo(codigo, descripcion, serie, index) {
   $(tr).empty();
   $("#btnConfirmar").removeClass("disabled");
 }
-/* 
-function articulo_seleccionado(codigo, descripcion, trabaserie) {
-  const tbodyAgregarArticulos = $(".tbodyAgregarArticulos");
-  const btnConfirmar = $("#btnConfirmar");
-
-  if (trabaserie === "S") {
-    btnConfirmar.addClass("disabled");
-    let serie = prompt("Ingrese numero de serie");
-    if (serie) {
-      $.ajax({
-        url: "/urbano/taller/buscar-serie",
-        type: "get",
-        dataType: "json",
-        data: { serie, codigo },
-        success: function (data) {
-          console.log(data);
-          if (data.serieOk) {
-            btnConfirmar.removeClass("disabled");
-
-            tbodyAgregarArticulos.append(`
-                <tr>
-                  <td>${codigo}</td>
-                  <td>${descripcion}</td>
-                  <td>${serie}</td>
-                </tr>
-              `);
-          } else {
-            alert("Serie pertenece a otro producto!");
-          }
-        },
-      });
-    }
-  } else {
-    btnConfirmar.removeClass("disabled");
-    tbodyAgregarArticulos.append(`
-        <tr>
-          <td>${codigo}</td>
-          <td>${descripcion}</td>
-          <td></td>
-        </tr>
-      `);
-  }
-} */

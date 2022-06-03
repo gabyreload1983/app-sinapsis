@@ -90,6 +90,7 @@ $(function () {
   });
 
   btnConfirmar.on("click", function () {
+    btnConfirmar.addClass("disabled");
     tbodyBuscarArticulo.empty();
     const tbodyOrdenHeader = $(".tbodyOrdenHeader");
     const tbodyAgregarArticulos = $(".tbodyAgregarArticulos")[0].children;
@@ -124,11 +125,14 @@ $(function () {
       data: { ingresoArticulos },
       success: function (data) {
         if (data.transaccion) {
+          $(".btn-group").append(`
+          <a class="btn btn-secondary btn-pdf" href="/urbano/taller/buscar-ingreso-egreso-articulos/${data.id}">PDF</a>
+          `);
           $(".spinner-border").addClass("d-none");
           buscarArticulos.addClass("d-none");
-          btnConfirmar.addClass("disabled");
-          btnReset.addClass("disabled");
-          btnImprimir.removeClass("d-none");
+          // btnConfirmar.addClass("disabled");
+          // btnReset.addClass("disabled");
+
           const now = moment().format("DD-MM-YYYY / hh:mm:ss");
           $(".date").removeClass("d-none").append(`FECHA: ${now}`);
         } else {
@@ -148,15 +152,8 @@ $(function () {
     $("#inputBuscarOrden").val("");
     $(".date").empty().addClass("d-none");
     btnConfirmar.addClass("disabled");
-    btnImprimir.addClass("d-none");
     buscarArticulos.addClass("d-none");
-  });
-
-  btnImprimir.on("click", function () {
-    $(".tbodyBuscarArticulo").empty();
-    btnConfirmar.addClass("disabled");
-    btnReset.removeClass("disabled");
-    window.print();
+    $(".btn-pdf").addClass("d-none");
   });
 });
 
