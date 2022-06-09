@@ -16,6 +16,14 @@ router.get("/taller/quitar-articulo-orden", urbano.quitar_articulo_orden);
 router.get("/taller/buscar-orden-reparacion", urbano.buscar_orden_reparacion);
 router.get("/taller/buscar-articulo", urbano.buscar_articulo);
 router.get("/taller/buscar-serie", urbano.buscar_serie);
+router.get(
+  "/taller/historial-ingreso-egreso-articulos",
+  urbano.historial_ingreso_egreso_articulos
+);
+router.get(
+  "/taller/buscar-ingreso-egreso-articulos/:id",
+  urbano.buscar_ingreso_egreso_articulos
+);
 router.get("/taller/:sector", urbano.ordenes_pendientes);
 
 router.post(

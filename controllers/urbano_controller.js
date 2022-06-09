@@ -3,9 +3,8 @@ const connection_tickets = require("../conexion/dbTickets");
 const constantes = require("../constantes/constantes");
 const moment = require("moment");
 const logger = require("../logger/logger");
-const PDF = require("pdfkit-construct");
-const fs = require("fs");
-// const { path } = require("pdfkit");
+const IngresoEgresoArticulos = require("../models/IngresoEgresoArticulos");
+const { buildPdf } = require("../services/buildPdf");
 
 //Home Page
 exports.index = (req, res) => {
@@ -690,6 +689,7 @@ exports.ingresar_articulos = async (req, res) => {
       return await get_from_urbano(query_reserva_articulo);
     };
 
+    //Ingreso y reserva de articulos en mysql urbano
     for (const articulo of ingresoArticulos.articulos) {
       const ingreso = await ingresarArticulo(articulo, ingresoArticulos);
       logger.info(`Ingreso ${articulo.codigo} - ${ingreso.affectedRows}`);
@@ -697,98 +697,30 @@ exports.ingresar_articulos = async (req, res) => {
       logger.info(`Reserva ${articulo.codigo} - ${reserva.affectedRows}`);
     }
 
-    const datos = JSON.stringify(ingresoArticulos);
+    //Crear arreglo de articulos
     let articulos = [];
     for (let articulo of ingresoArticulos.articulos) {
       articulos.push(articulo);
     }
 
-    let now = new Date();
-    let nowId = moment(now).format("YYYY-MM-DD-HHmmss");
-    now = moment(now).format("DD-MM-YYYY HH:mm:ss");
-    const id = `${nowId}-${ingresoArticulos.orden}`;
-    const filename = `${id}-IN.pdf`;
-
-    const cabecera = [
-      {
-        orden: `${ingresoArticulos.orden}`,
-        tecnico: `${ingresoArticulos.tecnico}`,
-      },
-    ];
-    //crear pdf
-    const doc = new PDF();
-
-    doc.setDocumentHeader({ height: "20" }, () => {
-      doc.image("./public/images/sinapsis.jpg", 5, 20, {
-        width: 300,
-      });
-      doc.fontSize(24).text("I", 300, 80);
-      doc.fontSize(10).text(`FECHA: ${now}`, 400, 80);
-      doc.fontSize(12).text(`USUARIO: ${ingresoArticulos.usuario}`, 400, 100);
-      doc
-        .fontSize(14)
-        .text(
-          `${ingresoArticulos.codigo} - ${ingresoArticulos.cliente}`,
-          60,
-          130
-        );
+    //Grabar transaccion en Mongodb
+    const transaction = await IngresoEgresoArticulos.create({
+      sentido: "INGRESO",
+      usuario: `${ingresoArticulos.usuario}`,
+      codigo: `${ingresoArticulos.codigo}`,
+      cliente: `${ingresoArticulos.cliente}`,
+      orden: `${ingresoArticulos.orden}`,
+      tecnico: `${ingresoArticulos.tecnico}`,
+      articulos: articulos,
     });
 
-    doc.addTable(
-      [
-        { key: "orden", label: "Nro Orden", align: "left" },
-        { key: "tecnico", label: "Tecnico", align: "left" },
-      ],
-      cabecera,
-      {
-        border: null,
-        width: "fill_body",
-        striped: true,
-        stripedColors: ["#f6f6f6", "#d6c4dd"],
-        cellsPadding: 10,
-        marginTop: 100,
-        marginLeft: 45,
-        marginRight: 45,
-        headAlign: "left",
-        marginBottom: 70,
-      }
-    );
-
-    doc.fontSize(14).text("ARTICULOS INGRESADOS", 70, 270);
-
-    doc.addTable(
-      [
-        { key: "codigo", label: "Codigo", align: "left" },
-        { key: "descripcion", label: "Descripcion", align: "left" },
-        { key: "serie", label: "Serie", align: "left" },
-      ],
-      articulos,
-      {
-        border: null,
-        width: "fill_body",
-        striped: true,
-        stripedColors: ["#f6f6f6", "#d6c4dd"],
-        cellsPadding: 5,
-        marginTop: 100,
-        marginLeft: 45,
-        marginRight: 45,
-        headAlign: "left",
-      }
-    );
-
-    doc.render();
-
-    doc.pipe(fs.createWriteStream(`./public/pdf/${filename}`));
-    doc.end();
-
-    logger.info(
-      `ingresar_articulos - Usuario: ${codigo_tecnico} - Host: ${host} datos: ${datos}`
-    );
+    logger.info(`ingresar_articulos - Host: ${host}
+    ${transaction}`);
 
     res.status(200).send({
       titulo: "ingresar_articulos",
       transaccion: true,
-      transcaccionId: id,
+      id: transaction._id,
     });
   } catch (error) {
     logger.error(
@@ -826,6 +758,7 @@ exports.quitar_articulos = async (req, res) => {
       return await get_from_urbano(query_quitar_reserva_articulo);
     };
 
+    //Sacar reserva de articulos y de orden en mysql urbano
     for (const articulo of quitarArticulos.articulos) {
       const sacar = await sacarArticulo(articulo, quitarArticulos);
       logger.info(`Sacar ${articulo.codigo} - ${sacar.affectedRows}`);
@@ -833,100 +766,31 @@ exports.quitar_articulos = async (req, res) => {
       logger.info(`Sacar Reserva ${articulo.codigo} - ${reserva.affectedRows}`);
     }
 
-    //FORMATEAR INFO
-    const datos = JSON.stringify(quitarArticulos);
+    //Crear arreglo de articulos
     let articulos = [];
     for (let articulo of quitarArticulos.articulos) {
       articulos.push(articulo);
     }
 
-    let now = new Date();
-    let nowId = moment(now).format("YYYY-MM-DD-HHmmss");
-    now = moment(now).format("DD-MM-YYYY HH:mm:ss");
-    const id = `${nowId}-${quitarArticulos.orden}`;
-    const filename = `${id}-OUT.pdf`;
-
-    const cabecera = [
-      {
-        orden: `${quitarArticulos.orden}`,
-        tecnico: `${quitarArticulos.tecnico}`,
-      },
-    ];
-
-    //crear pdf
-    const doc = new PDF();
-
-    doc.setDocumentHeader({ height: "20" }, () => {
-      doc.image("./public/images/sinapsis.jpg", 5, 20, {
-        width: 300,
-      });
-      doc.fontSize(24).text("E", 300, 80);
-      doc.fontSize(10).text(`FECHA: ${now}`, 400, 80);
-      doc.fontSize(12).text(`USUARIO: ${quitarArticulos.usuario}`, 400, 100);
-      doc
-        .fontSize(14)
-        .text(
-          `${quitarArticulos.codigo} - ${quitarArticulos.cliente}`,
-          60,
-          130
-        );
+    //Grabar transaccion en Mongodb
+    const transaccion = await IngresoEgresoArticulos.create({
+      sentido: "EGRESO",
+      usuario: `${quitarArticulos.usuario}`,
+      codigo: `${quitarArticulos.codigo}`,
+      cliente: `${quitarArticulos.cliente}`,
+      orden: `${quitarArticulos.orden}`,
+      tecnico: `${quitarArticulos.tecnico}`,
+      articulos: articulos,
     });
 
-    doc.addTable(
-      [
-        { key: "orden", label: "Nro Orden", align: "left" },
-        { key: "tecnico", label: "Tecnico", align: "left" },
-      ],
-      cabecera,
-      {
-        border: null,
-        width: "fill_body",
-        striped: true,
-        stripedColors: ["#f6f6f6", "#d6c4dd"],
-        cellsPadding: 10,
-        marginTop: 100,
-        marginLeft: 45,
-        marginRight: 45,
-        headAlign: "left",
-        marginBottom: 70,
-      }
-    );
-
-    doc.fontSize(14).text("ARTICULOS QUITADOS", 70, 270);
-
-    doc.addTable(
-      [
-        { key: "codigo", label: "Codigo", align: "left" },
-        { key: "descripcion", label: "Descripcion", align: "left" },
-        { key: "serie", label: "Serie", align: "left" },
-      ],
-      articulos,
-      {
-        border: null,
-        width: "fill_body",
-        striped: true,
-        stripedColors: ["#f6f6f6", "#d6c4dd"],
-        cellsPadding: 5,
-        marginTop: 100,
-        marginLeft: 45,
-        marginRight: 45,
-        headAlign: "left",
-      }
-    );
-
-    doc.render();
-
-    doc.pipe(fs.createWriteStream(`./public/pdf/${filename}`));
-    doc.end();
-
-    logger.info(
-      `quitar_articulos - Usuario: ${codigo_tecnico} - Host: ${host} datos: ${datos}`
-    );
+    logger.info(`quitar_articulos - Host: ${host}
+      ${transaccion}`);
 
     res.status(200).send({
       titulo: "quitar_articulos",
       transaccion: true,
-      transcaccionId: id,
+      id: transaccion._id,
+      orden: `${quitarArticulos.orden}`,
     });
   } catch (error) {
     logger.error(
@@ -1041,6 +905,65 @@ exports.cerrar_orden = async (req, res) => {
     );
     res.status(400).send({
       titulo: "Cerrar Orden",
+      transaccion: false,
+    });
+  }
+};
+
+exports.buscar_ingreso_egreso_articulos = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
+    const { id: _id } = req.params;
+    const transaccion = await IngresoEgresoArticulos.findById(_id);
+
+    logger.info(`buscar_ingreso_egreso_articulos - Host: ${host} -  Usuario: ${codigo_tecnico}
+     ${transaccion._id}`);
+
+    const stream = res.writeHead(200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment;filename=${transaccion.orden.slice(
+        10
+      )}.pdf`,
+    });
+
+    buildPdf(
+      (chunk) => stream.write(chunk),
+      () => stream.end(),
+      transaccion
+    );
+  } catch (error) {
+    logger.error(
+      `buscar_ingreso_egreso_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+    res.status(400).send({
+      titulo: "buscar_ingreso_egreso_articulos",
+      transaccion: false,
+    });
+  }
+};
+
+exports.historial_ingreso_egreso_articulos = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
+    // const { from, to } = req.params;
+    let transaccion = await IngresoEgresoArticulos.find()
+      .limit(30)
+      .sort({ date: -1 });
+
+    logger.info(
+      `historial_ingreso_egreso_articulos - ${codigo_tecnico} - Host: ${host}`
+    );
+
+    res.render("historialIngresoEgresoArticulos", {
+      titulo: "historial_ingreso_egreso_articulos",
+      transaccion,
+    });
+  } catch (error) {
+    logger.error(
+      `historial_ingreso_egreso_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+    res.status(400).send({
+      titulo: "historial_ingreso_egreso_articulos",
       transaccion: false,
     });
   }
