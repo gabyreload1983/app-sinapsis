@@ -946,7 +946,7 @@ exports.historial_ingreso_egreso_articulos = async (req, res) => {
     const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
     // const { from, to } = req.params;
     let transaccion = await IngresoEgresoArticulos.find()
-      .limit(10)
+      .limit(30)
       .sort({ date: -1 });
 
     logger.info(

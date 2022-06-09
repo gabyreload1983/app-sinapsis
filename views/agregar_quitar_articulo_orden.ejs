@@ -82,42 +82,18 @@
                 </table>
               </div>
             </div>
-            <% if (agregarArticulo) { %>
-            <!-- tabla articulos que se van agregar a la orden -->
+            <!-- tabla articulos que se van agregar o quitar a la orden -->
             <div class="row mb-3">
              
               <div class="col-12">
                 <div class="bg-light text-center rounded col-6 mb-2">
-                  <h6 class="m-0 py-2">ARTICULOS QUE SE AGREGAN A LA ORDEN</h2>
+                  <% if (agregarArticulo) { %>
+                    <h6 class="m-0 py-2">INGRESAR ARTICULOS</h2>
+                  <% } else { %>
+                    <h6 class="m-0 py-2">QUITAR ARTICULOS</h2>
+                  <% } %>
                 </div>
-                <table class="table table-sm table-secondary">
-                  <thead>
-                    <tr>
-                      <th scope="col">CODIGO</th>
-                      <th scope="col">DESCRIPCION</th>
-                      <th scope="col">SERIE</th>
-                    </tr>
-                  </thead>
-                  <tbody class="tbodyAgregarArticulos"></tbody>
-                </table>
-           
-                <div class="col">
-                  <button class="btn btn-primary disabled" id="btnConfirmar">
-                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    CONFIRMAR
-                  </button>
-                  <button class="btn btn-danger" id="btnReset">RESET</button>
-                </div>
-              </div>
-            </div>
-            <% } else { %>
-              <!-- tabla articulos que se van a quitar de la orden -->
-            <div class="row justify-content-center mb-3">
              
-              <div class="col-12">
-                <div class="bg-light text-center rounded col-6 mb-2">
-                  <h6 class="m-0 py-2">QUITAR ARTICULOS</h2>
-                </div>
                 <table class="table table-sm table-secondary">
                   <thead>
                     <tr>
@@ -126,20 +102,21 @@
                       <th scope="col">SERIE</th>
                     </tr>
                   </thead>
-                  <tbody class="tbodyQuitarArticulos"></tbody>
+                  <% if (agregarArticulo) { %>
+                    <tbody class="tbodyAgregarArticulos"></tbody>
+                  <% } else { %>
+                    <tbody class="tbodyQuitarArticulos"></tbody>
+                  <% } %>
                 </table>
-           
                 <div class="col btn-group">
                   <button class="btn btn-primary disabled" id="btnConfirmar">
                     <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                     CONFIRMAR
                   </button>
                   <button class="btn btn-danger" id="btnReset">RESET</button>
-                  <button class="btn btn-secondary d-none" id="btnImprimir">IMPRIMIR</button>
                 </div>
               </div>
             </div>
-            <% } %>
           </div>
 
           <% if (agregarArticulo) { %>
@@ -179,10 +156,7 @@
                   </table>
                 </div>
                </div>
-
             </div>
-        
-
           </div>
           <% } %>
         </div>
