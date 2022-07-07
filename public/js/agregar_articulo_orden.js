@@ -44,7 +44,7 @@ $(function () {
           });
         } else {
           buscarArticulos.addClass("d-none");
-          alert(`Orden ${orden_reparacion} no existe...`);
+          alert(data.errorMessage);
         }
       },
     });

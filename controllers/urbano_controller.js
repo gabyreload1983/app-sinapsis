@@ -544,32 +544,46 @@ exports.buscar_orden_reparacion = async (req, res) => {
     //Buscar orden
     let orden = await get_from_urbano(query_orden);
 
+    //validar si existe la orden
     if (orden.length !== 0) {
-      //Buscar articulos en orden
-      const articulos = await get_from_urbano(query_articulos_en_orden);
+      //ver si la orden esta tomada
+      if (!orden[0].tecnico) {
+        res.status(200).send({
+          titulo: "Buscar orden",
+          orden: false,
+          articulos: false,
+          codigo_tecnico: false,
+          errorMessage: `El tecnico debe tomar la orden.`,
+        });
+      } else {
+        //Buscar articulos en orden
+        const articulos = await get_from_urbano(query_articulos_en_orden);
 
-      logger.info(
-        `buscar_orden_reparacion - Usuario: ${codigo_tecnico} - Host: ${host} 
-      Busqueda orden: ${orden_reparacion}`
-      );
-      res.status(200).send({
-        titulo: "Buscar orden",
-        orden: orden,
-        articulos: articulos,
-        codigo_tecnico: codigo_tecnico,
-      });
+        logger.info(
+          `buscar_orden_reparacion - Usuario: ${codigo_tecnico} - Host: ${host} 
+        Busqueda orden: ${orden_reparacion}`
+        );
+        res.status(200).send({
+          titulo: "Buscar orden",
+          orden: orden,
+          articulos: articulos,
+          codigo_tecnico: codigo_tecnico,
+        });
+      }
     } else {
       res.status(200).send({
         titulo: "Buscar orden",
         orden: false,
         articulos: false,
         codigo_tecnico: false,
+        errorMessage: `Orden ${orden_reparacion} no existe...`,
       });
     }
   } catch (error) {
     logger.error(
       `buscar_orden_reparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(400);
   }
 };
 
