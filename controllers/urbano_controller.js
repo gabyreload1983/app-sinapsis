@@ -511,7 +511,7 @@ exports.agregar_articulo_orden = async (req, res) => {
   }
 };
 
-// agregar articulo en orden VIEW
+// quitar articulo en orden VIEW
 exports.quitar_articulo_orden = async (req, res) => {
   try {
     const { host, codigo_tecnico_log: codigo_tecnico } = req.body;
@@ -688,18 +688,17 @@ exports.ingresar_articulos = async (req, res) => {
     const ingresarArticulo = async (articulo, ingresoArticulos) => {
       let query_ingresar_articulo_orden = `INSERT INTO trrenglo
       (serie, ingreso, festado, asignado, fdiag, cliente, operador, falla, tecnico, codart, descart, nrocompro, seguridad, costo, pendiente, tipo, sector, diag )
-            SELECT "${articulo.serie}", NOW(), NOW(), NOW(), NOW(), ${ingresoArticulos.codigo}, 
-            "${ingresoArticulos.usuario}", "FALLA", 
-            "${ingresoArticulos.tecnico}", 
-            ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", "MOSTRADORGABYT", 0, 1, "ST", "E", "RE"
-            FROM articulo
-            WHERE codigo = ${articulo.codigo}`;
+      VALUES (
+        "${articulo.serie}", NOW(), NOW(), NOW(), NOW(), ${ingresoArticulos.codigo}, 
+        "${ingresoArticulos.usuario}", "FALLA", "${ingresoArticulos.tecnico}", 
+        ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", 
+        "MOSTRADORGABY 00:01", 0.0000, 1.0000, "ST", "E", "RE" )`;
 
       return await get_from_urbano(query_ingresar_articulo_orden);
     };
 
     const reservaArticulo = async (articulo) => {
-      let query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 +1 WHERE codigo = ${articulo.codigo}`;
+      let query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 + 1 WHERE codigo = ${articulo.codigo}`;
       return await get_from_urbano(query_reserva_articulo);
     };
 
@@ -768,7 +767,7 @@ exports.quitar_articulos = async (req, res) => {
     };
 
     const sacarReservaArticulo = async (articulo) => {
-      let query_quitar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codigo}`;
+      let query_quitar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 - 1 WHERE codigo = ${articulo.codigo}`;
       return await get_from_urbano(query_quitar_reserva_articulo);
     };
 
