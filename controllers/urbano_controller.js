@@ -890,7 +890,7 @@ exports.cerrar_orden = async (req, res) => {
 
     console.log(diagnostico);
 
-    const query_cerrar_orden = `UPDATE trabajos SET estado = 23, diag = ${diagnostico} WHERE nrocompro = "ORX0011000${orden}"`;
+    const query_cerrar_orden = `UPDATE trabajos SET estado = 23, diag = ${diagnostico}, diagnosticado = NOW() WHERE nrocompro = "ORX0011000${orden}"`;
 
     const result = await get_from_urbano(query_cerrar_orden);
 
