@@ -403,6 +403,7 @@ exports.ordenes_para_retirar = async (req, res) => {
                                           ingresado > "${desde} 00:00:00" AND
                                           codigo != "ANULADO" AND 
                                           estado = 23  AND 
+                                          diag = 22 AND
                                           ubicacion = 21
                                           ORDER BY ingresado DESC`;
 
