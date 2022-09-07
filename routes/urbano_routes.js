@@ -11,6 +11,7 @@ router.get("/taller/ordenes-en-proceso", urbano.ordenes_en_proceso);
 router.get("/taller/mis-ordenes-tomadas", urbano.mis_ordenes_tomadas);
 router.get("/taller/estadisticas-tecnicos", urbano.estadisticas_tecnicos);
 router.get("/taller/ordenes-para-retirar", urbano.ordenes_para_retirar);
+router.get("/taller/ordenes-sin-reparacion", urbano.ordenesSinReparacion);
 router.get("/taller/agregar-articulo-orden", urbano.agregar_articulo_orden);
 router.get("/taller/quitar-articulo-orden", urbano.quitar_articulo_orden);
 router.get("/taller/buscar-orden-reparacion", urbano.buscar_orden_reparacion);

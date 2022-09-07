@@ -982,3 +982,44 @@ exports.historial_ingreso_egreso_articulos = async (req, res) => {
     });
   }
 };
+
+//Ordenes sin reparacion
+exports.ordenesSinReparacion = async (req, res) => {
+  try {
+    let now = new Date();
+    const yearAgo = moment(now.setFullYear(now.getFullYear() - 1)).format(
+      "YYYY-MM-DD"
+    );
+
+    const host = req.body.host;
+    const codigo_tecnico = req.body.codigo_tecnico_log;
+    const query = `SELECT * FROM trabajos WHERE 
+                                          ingresado > "${yearAgo} 00:00:00" AND
+                                          codigo != "ANULADO" AND 
+                                          estado = 23  AND 
+                                          diag = 23 AND
+                                          ubicacion = 21
+                                          ORDER BY ingresado DESC`;
+
+    let ordenesSinReparacion = await get_from_urbano(query);
+
+    ordenesSinReparacion = await get_ordenes_formateadas(ordenesSinReparacion);
+
+    logger.info(
+      `ordenesSinReparacion - Usuario: ${codigo_tecnico} - Host: ${host}`
+    );
+
+    res.render("ordenes_tabla", {
+      titulo: "ordenesSinReparacion",
+      ordenes: ordenesSinReparacion,
+      tomar: false,
+      reparaciones_por_dia: false,
+      demora: false,
+      fila: 0,
+    });
+  } catch (error) {
+    logger.error(
+      `ordenesSinReparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+  }
+};
