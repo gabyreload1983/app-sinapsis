@@ -57,7 +57,7 @@ exports.tecnicos = [
   },
   {
     codigo: "MATIT",
-    nombre: "MATIAS",
+    nombre: "MATI",
   },
   {
     codigo: "CLAUT",
