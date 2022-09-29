@@ -690,16 +690,16 @@ exports.ingresar_articulos = async (req, res) => {
       let query_ingresar_articulo_orden = `INSERT INTO trrenglo
       (serie, ingreso, festado, asignado, fdiag, cliente, operador, falla, tecnico, codart, descart, nrocompro, seguridad, costo, pendiente, tipo, sector, diag )
       VALUES (
-        "${articulo.serie}", NOW(), NOW(), NOW(), NOW(), ${ingresoArticulos.codigo}, 
+        "${articulo.serie}", NOW(), NOW(), NOW(), NOW(), "${ingresoArticulos.codigo}", 
         "${ingresoArticulos.usuario}", "FALLA", "${ingresoArticulos.tecnico}", 
-        ${articulo.codigo}, "${articulo.descripcion}", "${ingresoArticulos.orden}", 
+        "${articulo.codigo}", "${articulo.descripcion}", "${ingresoArticulos.orden}", 
         "MOSTRADORGABY 00:01", 0.0000, 1.0000, "ST", "E", "RE" )`;
 
       return await get_from_urbano(query_ingresar_articulo_orden);
     };
 
     const reservaArticulo = async (articulo) => {
-      let query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 + 1 WHERE codigo = ${articulo.codigo}`;
+      let query_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 + 1 WHERE codigo = "${articulo.codigo}"`;
       return await get_from_urbano(query_reserva_articulo);
     };
 
@@ -758,8 +758,8 @@ exports.quitar_articulos = async (req, res) => {
     const sacarArticulo = async (articulo, quitarArticulos) => {
       let query_quitar_articulo_orden = `UPDATE trrenglo SET 
       tipo="", sector="", diag="", serie="", ingreso="", festado="", asignado="", fdiag="", egreso="", cliente="", operador="", falla="", tecnico="", codart="", descart="", nrocompro="", seguridad="", costo="", pendiente=""
-      WHERE  cliente = ${quitarArticulos.codigo} AND 
-      codart= ${articulo.codigo} AND 
+      WHERE  cliente = "${quitarArticulos.codigo}" AND 
+      codart= "${articulo.codigo}" AND 
       nrocompro = "${quitarArticulos.orden}" AND 
       serie = "${articulo.serie}" 
       LIMIT 1`;
@@ -768,7 +768,7 @@ exports.quitar_articulos = async (req, res) => {
     };
 
     const sacarReservaArticulo = async (articulo) => {
-      let query_quitar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 - 1 WHERE codigo = ${articulo.codigo}`;
+      let query_quitar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 - 1 WHERE codigo = "${articulo.codigo}"`;
       return await get_from_urbano(query_quitar_reserva_articulo);
     };
 
@@ -836,7 +836,7 @@ exports.salida_orden = async (req, res) => {
 
     if (articulosEnOrden.length !== 0) {
       const sacarReservaArticulo = async (articulo) => {
-        let query_sacar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = ${articulo.codart}`;
+        let query_sacar_reserva_articulo = `UPDATE artstk01 SET reserd01 = reserd01 -1 WHERE codigo = "${articulo.codart}"`;
         return await get_from_urbano(query_sacar_reserva_articulo);
       };
 
