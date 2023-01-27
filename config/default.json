@@ -9,5 +9,10 @@
   "ticketDb": "",
   "ticketPass": "",
   "ticketUser": "",
-  "PORT": ""
+  "PORT": "",
+  "MAIL_HOST": "",
+  "MAIL_USER": "",
+  "MAIL_PASSWORD": "",
+  "MAIL_FROM": "",
+  "MAIL_BCC": ""
 }

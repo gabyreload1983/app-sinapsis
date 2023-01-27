@@ -9,5 +9,10 @@
   "ticketDb": "urbano_ticketDb",
   "ticketPass": "urbano_ticketPass",
   "ticketUser": "urbano_ticketUser",
-  "PORT": "urbano_PORT"
+  "PORT": "urbano_PORT",
+  "MAIL_HOST": "urbano_mail_host",
+  "MAIL_USER": "urbano_mail_user",
+  "MAIL_PASSWORD": "urbano_mail_password",
+  "MAIL_FROM": "urbano_mail_from",
+  "MAIL_BCC": ""
 }

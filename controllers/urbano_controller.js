@@ -5,6 +5,7 @@ const moment = require("moment");
 const logger = require("../logger/logger");
 const IngresoEgresoArticulos = require("../models/IngresoEgresoArticulos");
 const { buildPdf } = require("../services/buildPdf");
+const { sendMailCloseWorkOrder } = require("../services/sendMail");
 
 //Home Page
 exports.index = (req, res) => {
@@ -887,11 +888,12 @@ exports.cerrar_orden = async (req, res) => {
       codigo_tecnico_log: codigo_tecnico,
       orden,
       diagnostico,
+      sendMail = false,
     } = req.body;
 
-    console.log(diagnostico);
-
-    const query_cerrar_orden = `UPDATE trabajos SET estado = 23, diag = ${diagnostico}, diagnosticado = NOW() WHERE nrocompro = "ORX0011000${orden}"`;
+    const query_cerrar_orden = `UPDATE trabajos SET estado = 23, diag = ${
+      diagnostico === "reparado" ? 22 : 23
+    }, diagnosticado = NOW() WHERE nrocompro = "ORX0011000${orden}"`;
 
     const result = await get_from_urbano(query_cerrar_orden);
 
@@ -899,6 +901,16 @@ exports.cerrar_orden = async (req, res) => {
       logger.info(
         `cerrar_orden - ${orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
       );
+      if (sendMail) {
+        const query_get_mail = `SELECT clientes.mail FROM clientes INNER JOIN trabajos ON clientes.codigo = trabajos.codigo WHERE nrocompro = 'ORX0011000${orden}'`;
+        const mail = await get_from_urbano(query_get_mail);
+        if (mail[0].mail) {
+          const resp = await sendMailCloseWorkOrder(orden, mail[0].mail);
+          logger.info(
+            `cerrar_orden - ${orden} - Usuario: ${codigo_tecnico} - Host: ${host} se envio mail a: ${resp.accepted}`
+          );
+        }
+      }
       res.status(200).send({
         titulo: "Cerrar Orden",
         transaccion: true,
