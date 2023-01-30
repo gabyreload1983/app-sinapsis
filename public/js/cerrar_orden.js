@@ -1,44 +1,72 @@
 $(function () {
   // cerrar
   $(".btn-cerrar").on("click", function (e) {
-    const orden = this.id.slice(0, 5);
-    const cerrarOrden = confirm(`Cerrar orden: ${orden}???`);
-    if (cerrarOrden) {
-      $.ajax({
-        url: "/urbano/taller/cerrar-orden",
-        type: "post",
-        dataType: "json",
-        data: { orden, diagnostico: 22 }, //22- reparado
-        success: function (data) {
-          if (data.transaccion) {
-            alert(`Se cerro orden ${data.orden}`);
-            location.reload();
-          } else {
-            alert("No se cerro orden.");
-          }
-        },
-      });
-    }
-  });
-  // sin reparacion
-  $(".btn-sin-reparacion").on("click", function (e) {
-    const orden = this.id.slice(0, 5);
-    const cerrarOrden = confirm(`Cerrar orden: ${orden} SIN REPARACION???`);
-    if (cerrarOrden) {
-      $.ajax({
-        url: "/urbano/taller/cerrar-orden",
-        type: "post",
-        dataType: "json",
-        data: { orden, diagnostico: 23 }, //23= sin reparacion
-        success: function (data) {
-          if (data.transaccion) {
-            alert(`Se cerro orden ${data.orden}`);
-            location.reload();
-          } else {
-            alert("No se cerro orden.");
-          }
-        },
-      });
-    }
+    const orden = $(this).attr("id").slice(0, 5);
+    const diagnostico = $(this).attr("diagnostico");
+    let sendMail = "";
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
+    });
+
+    Swal.fire({
+      title: `Cerrar Orden ${orden}???`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirmar!",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          allowOutsideClick: false,
+          title: `Enviar mail de notificacion???`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Cerrar orden y Enviar!",
+          cancelButtonText: "Solo cerrar.",
+          cancelButtonColor: "#519030",
+        }).then((result) => {
+          if (result.isConfirmed) sendMail = true;
+          Swal.fire({
+            title: `Cerrando orden ${orden} y enviadndo email...`,
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+              $.ajax({
+                url: "/urbano/taller/cerrar-orden",
+                type: "post",
+                dataType: "json",
+                data: { orden, diagnostico, sendMail },
+                success: function (data) {
+                  if (data.transaccion) {
+                    Toast.fire({
+                      icon: "success",
+                      title: `Se cerro orden ${data.orden} con exito!`,
+                    }).then(() => location.reload());
+                  } else {
+                    Toast.fire({
+                      icon: "danger",
+                      title: `Error al cerrar orden ${data.orden}`,
+                    }).then(() => location.reload());
+                  }
+                },
+              });
+            },
+          });
+        });
+      }
+    });
   });
 });

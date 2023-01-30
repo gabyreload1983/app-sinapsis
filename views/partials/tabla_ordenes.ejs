@@ -1,11 +1,11 @@
 <!-- Tabla con ordenes -->
-<div class="container p-0">
+<div class="container-fluid p-0">
   <!-- Accordion -->
   <div class="accordion" id="accordionOrdenes">
     <% ordenes.forEach(orden => { %>
     <div class="accordion-item bg-transparent border-0">
       <div class="row justify-content-around m-0">
-        <div class="col">
+        <div class="col-9">
           <button
             class="accordion-button collapsed prioridad<%= orden.prioridad %>"
             type="button"
@@ -14,13 +14,12 @@
             aria-expanded="false"
             aria-controls="collapse<%= orden.nrocompro %>"
           >
-            <div class="col-1">#<%= fila += 1 %></div>
-            <div class="col-1"><%= orden.ingresado%></div>
-            <div class="col-1"><%= orden.nrocompro%></div>
+            <div class="col">#<%= fila += 1 %></div>
+            <div class="col"><%= orden.ingresado%></div>
+            <div class="col"><%= orden.nrocompro%></div>
             <div class="col"><%= orden.nombre%></div>
             <div class="col"><%= orden.prioridad%></div>
-            <div class="col-1"><%= orden.tecnico%></div>
-            <div class="col-1"></div>
+            <div class="col"><%= orden.tecnico%></div>
           </button>
           <div
             id="collapse<%= orden.nrocompro %>"
@@ -109,19 +108,23 @@
           </button>
 
           <% } %> <% if (orden.estado === "En Proceso") { %>
-          <button
+          <div class="btn-group">
+            <button
             class="btn btn-success btn-sm btn-cerrar"
             id="<%= orden.nrocompro%>-cerrar"
-          >
+            diagnostico="reparado"
+            >
             Cerrar
-          </button>
-          <button
-            class="btn btn-danger btn-sm btn-sin-reparacion"
+            </button>
+            <button
+            class="btn btn-danger btn-sm btn-cerrar"
             id="<%= orden.nrocompro%>-sinReparacion"
-          >
+            diagnostico="sinreparacion"
+            >
             Sin Reparacion
-          </button>
-          <% } %>
+            </button>
+        </div>
+        <% } %>
         </div>
       </div>
     </div>

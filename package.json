@@ -16,6 +16,7 @@
     "moment": "^2.29.1",
     "mongoose": "^5.9.23",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.9.0",
     "pdfkit": "^0.13.0",
     "pdfkit-construct": "^1.2.3",
     "validator": "^13.6.0",
