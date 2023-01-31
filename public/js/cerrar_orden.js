@@ -3,7 +3,7 @@ $(function () {
   $(".btn-cerrar").on("click", function (e) {
     const orden = $(this).attr("id").slice(0, 5);
     const diagnostico = $(this).attr("diagnostico");
-    let sendMail = "";
+    let sendMailFlag = "";
 
     const Toast = Swal.mixin({
       toast: true,
@@ -38,9 +38,13 @@ $(function () {
           cancelButtonText: "Solo cerrar.",
           cancelButtonColor: "#519030",
         }).then((result) => {
-          if (result.isConfirmed) sendMail = true;
+          let title = `Cerrando orden ${orden}`;
+          if (result.isConfirmed) {
+            sendMailFlag = true;
+            title = `Cerrando orden ${orden} y enviadndo email...`;
+          }
           Swal.fire({
-            title: `Cerrando orden ${orden} y enviadndo email...`,
+            title,
             allowOutsideClick: false,
             didOpen: () => {
               Swal.showLoading();
@@ -48,7 +52,7 @@ $(function () {
                 url: "/urbano/taller/cerrar-orden",
                 type: "post",
                 dataType: "json",
-                data: { orden, diagnostico, sendMail },
+                data: { orden, diagnostico, sendMailFlag },
                 success: function (data) {
                   if (data.transaccion) {
                     Toast.fire({

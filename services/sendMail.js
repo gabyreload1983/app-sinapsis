@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendMail = async (mail, body, subject) => {
+exports.sendMail = async (mail, body, subject) => {
   return await transporter.sendMail({
     from: config.get("MAIL_FROM"),
     to: mail,
@@ -22,12 +22,7 @@ const sendMail = async (mail, body, subject) => {
   });
 };
 
-exports.sendMailCloseWorkOrder = async (nrocompro, mailTo) => {
-  const body = getBody(nrocompro);
-  return await sendMail(mailTo, body, "Servicio Técnico Sinapsis");
-};
-
-const getBody = (nrocompro) => {
+exports.getBodyCloseWorkOrder = (nrocompro) => {
   return `
     <p>Nos comunicamos de Sinapsis SRL para informarte que tu orden reparación nro ${nrocompro} esta lista para retirar.</p>
     <p>Para mas información, registrate en nuestra pagina y podras acceder al detalle de cada reparacion.</p>
@@ -145,7 +140,7 @@ const getBody = (nrocompro) => {
                                 width="24"
                                 alt="facebook"
                                 border="0"
-                                src="https://img1.gimm.io/assets/social/96/native/3/facebook.png"
+                                src="https://cdn-icons-png.flaticon.com/512/733/733547.png"
                             /></a>
                           </p>
                         </td>
@@ -161,7 +156,23 @@ const getBody = (nrocompro) => {
                                 width="24"
                                 alt="instagram"
                                 border="0"
-                                src="https://img1.gimm.io/assets/social/96/native/3/instagram.png"
+                                src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"
+                            /></a>
+                          </p>
+                        </td>
+                        <td style="padding-right: 10px">
+                          <p style="margin: 0.04px">
+                            <a
+                              style="font-size: 0px; line-height: 0px"
+                              target="_blank"
+                              rel="nofollow"
+                              href="https://goo.gl/maps/4JfV9WJgf4WjaAoP6"
+                              ><img
+                                height="24"
+                                width="24"
+                                alt="maps"
+                                border="0"
+                                src="https://cdn-icons-png.flaticon.com/512/1865/1865269.png"
                             /></a>
                           </p>
                         </td>
@@ -177,7 +188,7 @@ const getBody = (nrocompro) => {
                                 width="24"
                                 alt="whatsapp"
                                 border="0"
-                                src="https://img1.gimm.io/assets/social/96/native/3/whatsapp.png"
+                                src="https://cdn-icons-png.flaticon.com/512/5968/5968841.png"
                             /></a>
                           </p>
                         </td>
@@ -281,6 +292,7 @@ const getBody = (nrocompro) => {
                             >
                               <a
                                 href="https://sinapsis.com.ar/"
+                                target="_blank"
                                 style="text-decoration: none"
                               >
                                 sinapsis.com.ar
