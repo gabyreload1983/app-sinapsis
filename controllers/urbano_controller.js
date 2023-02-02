@@ -939,6 +939,45 @@ exports.cerrar_orden = async (req, res) => {
   }
 };
 
+//Cerrar liberar
+exports.liberar_orden = async (req, res) => {
+  try {
+    const { host, codigo_tecnico_log: codigo_tecnico, orden } = req.body;
+
+    const query = `UPDATE trabajos SET estado = 21, diag = 21, tecnico = '' WHERE nrocompro = 'ORX0011000${orden}'`;
+
+    const result = await get_from_urbano(query);
+
+    if (result.affectedRows) {
+      logger.info(
+        `liberar_orden - ${orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+
+      res.status(200).send({
+        titulo: "Liberar Orden",
+        transaccion: true,
+        orden,
+      });
+    } else {
+      logger.info(
+        `NO SE LIBERO ORDEN:${orden} - Usuario: ${codigo_tecnico} - Host: ${host}`
+      );
+      res.status(400).send({
+        titulo: "Liberar Orden",
+        transaccion: false,
+      });
+    }
+  } catch (error) {
+    logger.error(
+      `liberar_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
+    );
+    res.status(400).send({
+      titulo: "Liberar Orden",
+      transaccion: false,
+    });
+  }
+};
+
 exports.buscar_ingreso_egreso_articulos = async (req, res) => {
   try {
     const { host, codigo_tecnico_log: codigo_tecnico } = req.body;

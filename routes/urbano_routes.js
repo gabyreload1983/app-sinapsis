@@ -36,5 +36,6 @@ router.post("/taller/ingresar-articulos", urbano.ingresar_articulos);
 router.post("/taller/quitar-articulos", urbano.quitar_articulos);
 router.post("/taller/salida-orden", urbano.salida_orden);
 router.post("/taller/cerrar-orden", urbano.cerrar_orden);
+router.post("/taller/liberar-orden", urbano.liberar_orden);
 
 module.exports = router;

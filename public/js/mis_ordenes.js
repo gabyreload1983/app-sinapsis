@@ -1,21 +1,20 @@
 $(function () {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
   // cerrar
   $(".btn-cerrar").on("click", function (e) {
     const orden = $(this).attr("id").slice(0, 5);
     const diagnostico = $(this).attr("diagnostico");
     let sendMailFlag = "";
-
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.addEventListener("mouseenter", Swal.stopTimer);
-        toast.addEventListener("mouseleave", Swal.resumeTimer);
-      },
-    });
 
     Swal.fire({
       title: `Cerrar Orden ${orden}???`,
@@ -68,6 +67,55 @@ $(function () {
                 },
               });
             },
+          });
+        });
+      }
+    });
+  });
+
+  //liberar
+  $(".btn-free").on("click", function (e) {
+    const orden = $(this).attr("id").slice(0, 5);
+
+    Swal.fire({
+      title: `Liberar orden ${orden}???`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirmar!",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: `Esta funcion esta en desarrollo.`,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+            $.ajax({
+              url: "/urbano/taller/liberar-orden",
+              type: "post",
+              dataType: "json",
+              data: { orden },
+              success: function (data) {
+                if (data.transaccion) {
+                  Toast.fire({
+                    icon: "success",
+                    title: `Se libero orden ${data.orden} con exito!`,
+                  }).then(() => location.reload());
+                } else {
+                  Toast.fire({
+                    icon: "danger",
+                    title: `Error al liberar orden ${data.orden}`,
+                  }).then(() => location.reload());
+                }
+              },
+            });
+          },
+        }).then(() => {
+          Toast.fire({
+            icon: "success",
+            title: "Proximamente...",
           });
         });
       }
