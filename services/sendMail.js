@@ -1,22 +1,21 @@
 "use strict";
 const nodemailer = require("nodemailer");
-const config = require("config");
 
 const transporter = nodemailer.createTransport({
-  host: config.get("MAIL_HOST"),
+  host: process.env.MAIL_HOST,
   port: 465,
   secure: true,
   auth: {
-    user: config.get("MAIL_USER"),
-    pass: config.get("MAIL_PASSWORD"),
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASSWORD,
   },
 });
 
 exports.sendMail = async (mail, body, subject) => {
   return await transporter.sendMail({
-    from: config.get("MAIL_FROM"),
+    from: process.env.MAIL_FROM,
     to: mail,
-    bcc: `${config.get("MAIL_BCC")}`,
+    bcc: `${process.env.MAIL_BCC}`,
     subject: subject,
     html: body,
   });

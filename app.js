@@ -5,7 +5,6 @@ const auth_routes = require("./routes/auth_routes");
 const urbano_routes = require("./routes/urbano_routes");
 const cookieParser = require("cookie-parser");
 const { requireAuth, checkUser } = require("./middleware/auth");
-const config = require("config");
 const logger = require("./logger/logger");
 
 const app = express();
@@ -25,17 +24,17 @@ logger.info(`EXPRESS: ${app.get("env")}`);
 //comment
 
 //Se chequea variables de entorno
-if (!config.get("mongoDb")) {
+if (!process.env.MONGO_DB) {
   logger.error("FATAL ERROR: db is not defined...");
   process.exit(1);
 }
-if (!config.get("jwtPrivateKey")) {
+if (!process.env.JWT_PRIVATE_KEY) {
   logger.error("FATAL ERROR: jwtPrivateKey is not defined...");
   process.exit(1);
 }
 
 // database connection
-const mongoDb = config.get("mongoDb");
+const mongoDb = process.env.MONGO_DB;
 const dbURI = `mongodb+srv://${mongoDb}@cluster0.4hbz9.mongodb.net/urbano?retryWrites=true&w=majority`;
 mongoose
   .connect(dbURI, {
@@ -45,8 +44,7 @@ mongoose
   })
   .then((result) => {
     logger.info("Connected to mongoDB...");
-    const PORT = config.get("PORT");
-    const port = process.env.PORT || PORT;
+    const port = process.env.PORT;
     app.listen(port, () => logger.info(`Listening on port ${port}...`));
   })
   .catch((err) => {
