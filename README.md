@@ -1,0 +1,25 @@
+# ENVIRONMENT VARIABLES
+
+- JWT_PRIVATE_KEY
+- MONGO_CREDENTIALS
+- URBANO_HOST
+- URBANO_DB
+- URBANO_PASS
+- URBANO_USER
+- TICKET_HOST
+- TICKET_DB
+- TICKET_PASS
+- TICKET_USER
+- PORT
+- MAIL_HOST
+- MAIL_USER
+- MAIL_PASSWORD
+- MAIL_FROM
+- MAIL_BCC
+- NODE_ENV
+
+# DEPLOY
+
+- Clone the repo.
+- Create docker-compose.yml and put in the root directory
+- Run docker-compose up -d

@@ -34,9 +34,7 @@ if (!process.env.JWT_PRIVATE_KEY) {
 }
 
 // database connection
-// const mongoDb = process.env.MONGO_DB;
-// const dbURI = `mongodb+srv://${mongoDb}@cluster0.4hbz9.mongodb.net/urbano?retryWrites=true&w=majority`;
-const dbURI = `mongodb+srv://${process.env.MONGO_CREDENTIALS}@cluster0.4hbz9.mongodb.net/urbano?retryWrites=true&w=majority`;
+const dbURI = `mongodb+srv://${process.env.MONGO_CREDENTIALS}@gabysystem.c81cfnu.mongodb.net/gabysystem?retryWrites=true&w=majority`;
 mongoose
   .connect(dbURI, {
     useNewUrlParser: true,
@@ -60,6 +58,3 @@ app.post("*", checkUser);
 app.use("/", index_router);
 app.use(auth_routes);
 app.use("/urbano", requireAuth, urbano_routes);
-
-// Production
-// require("./prod")(app);
