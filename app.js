@@ -24,8 +24,8 @@ logger.info(`EXPRESS: ${app.get("env")}`);
 //comment
 
 //Se chequea variables de entorno
-if (!process.env.MONGO_DB) {
-  logger.error("FATAL ERROR: db is not defined...");
+if (!process.env.MONGO_CREDENTIALS) {
+  logger.error("FATAL ERROR: mongo's environment variables missing...");
   process.exit(1);
 }
 if (!process.env.JWT_PRIVATE_KEY) {
@@ -34,8 +34,9 @@ if (!process.env.JWT_PRIVATE_KEY) {
 }
 
 // database connection
-const mongoDb = process.env.MONGO_DB;
-const dbURI = `mongodb+srv://${mongoDb}@cluster0.4hbz9.mongodb.net/urbano?retryWrites=true&w=majority`;
+// const mongoDb = process.env.MONGO_DB;
+// const dbURI = `mongodb+srv://${mongoDb}@cluster0.4hbz9.mongodb.net/urbano?retryWrites=true&w=majority`;
+const dbURI = `mongodb+srv://${process.env.MONGO_CREDENTIALS}@cluster0.4hbz9.mongodb.net/urbano?retryWrites=true&w=majority`;
 mongoose
   .connect(dbURI, {
     useNewUrlParser: true,
