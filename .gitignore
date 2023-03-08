@@ -3,3 +3,4 @@
 /public/pdf
 package-lock.json
 docker-compose.yml
+.env
