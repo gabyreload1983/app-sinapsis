@@ -1,6 +1,5 @@
-const config = require("config");
 const jwt = require("jsonwebtoken");
-const jwtPrivateKey = config.get("jwtPrivateKey");
+const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 const User = require("../models/User");
 const logger = require("../logger/logger");
 

@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const config = require("config");
 const logger = require("../logger/logger");
 
-const jwtPrivateKey = config.get("jwtPrivateKey");
+const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
 const requireAuth = (req, res, next) => {
   const token = req.cookies.jwt;
