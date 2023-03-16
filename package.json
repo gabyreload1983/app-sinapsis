@@ -1,6 +1,6 @@
 {
-  "name": "node-express-jwt-auth",
-  "version": "1.0.0",
+  "name": "app-sinapsis",
+  "version": "3.0.0",
   "description": "",
   "main": "app.js",
   "dependencies": {
@@ -23,24 +23,10 @@
   },
   "scripts": {
     "start": "node app.js",
-    "startdev": "nodemon app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engines": {
-    "node": "14.17.6"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/iamshaunjp/node-express-jwt-auth.git"
-  },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/iamshaunjp/node-express-jwt-auth/issues"
-  },
-  "homepage": "https://github.com/iamshaunjp/node-express-jwt-auth#readme",
-  "devDependencies": {
-    "eslint": "^8.7.0"
-  }
+  "author": "Gabriel Godoy",
+  "license": "ISC"
 }

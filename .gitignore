@@ -2,5 +2,5 @@
 /logger/files
 /public/pdf
 package-lock.json
-Dockerfile
 docker-compose.yml
+.env
