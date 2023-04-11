@@ -5,7 +5,12 @@ const moment = require("moment");
 const logger = require("../logger/logger");
 const IngresoEgresoArticulos = require("../models/IngresoEgresoArticulos");
 const { buildPdf } = require("../services/buildPdf");
-const { sendMail, getBodyCloseWorkOrder } = require("../services/sendMail");
+const {
+  sendMail,
+  getBodyCloseWorkOrder,
+  sendPdf,
+} = require("../services/sendMail");
+const User = require("../models/User");
 
 //Home Page
 exports.index = (req, res) => {
@@ -719,7 +724,7 @@ exports.ingresar_articulos = async (req, res) => {
     }
 
     //Grabar transaccion en Mongodb
-    const transaction = await IngresoEgresoArticulos.create({
+    const data = {
       sentido: "INGRESO",
       usuario: `${ingresoArticulos.usuario}`,
       codigo: `${ingresoArticulos.codigo}`,
@@ -727,7 +732,15 @@ exports.ingresar_articulos = async (req, res) => {
       orden: `${ingresoArticulos.orden}`,
       tecnico: `${ingresoArticulos.tecnico}`,
       articulos: articulos,
+    };
+    const transaction = await IngresoEgresoArticulos.create(data);
+
+    //enviar mail con pdf al tecnico
+    const technical = await User.findOne({
+      codigo_tecnico: ingresoArticulos.tecnico,
     });
+
+    await sendPdf(data, technical.email);
 
     logger.info(`ingresar_articulos - Host: ${host}
     ${transaction}`);
@@ -788,7 +801,7 @@ exports.quitar_articulos = async (req, res) => {
     }
 
     //Grabar transaccion en Mongodb
-    const transaccion = await IngresoEgresoArticulos.create({
+    const data = {
       sentido: "EGRESO",
       usuario: `${quitarArticulos.usuario}`,
       codigo: `${quitarArticulos.codigo}`,
@@ -796,7 +809,15 @@ exports.quitar_articulos = async (req, res) => {
       orden: `${quitarArticulos.orden}`,
       tecnico: `${quitarArticulos.tecnico}`,
       articulos: articulos,
+    };
+    const transaccion = await IngresoEgresoArticulos.create(data);
+
+    //enviar mail con pdf al tecnico
+    const technical = await User.findOne({
+      codigo_tecnico: quitarArticulos.tecnico,
     });
+
+    await sendPdf(data, technical.email);
 
     logger.info(`quitar_articulos - Host: ${host}
       ${transaccion}`);

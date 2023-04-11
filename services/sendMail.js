@@ -1,5 +1,9 @@
 "use strict";
 const nodemailer = require("nodemailer");
+const moment = require("moment");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const absolutePath = require("../utils");
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
@@ -19,6 +23,64 @@ exports.sendMail = async (mail, body, subject) => {
     subject: subject,
     html: body,
   });
+};
+
+const sendMailPdf = async (mail, body, subject, filePath = "") => {
+  return await transporter.sendMail({
+    from: process.env.MAIL_FROM,
+    to: mail,
+    bcc: `${process.env.MAIL_BCC}`,
+    subject: subject,
+    html: body,
+    attachments: {
+      path: filePath,
+    },
+  });
+};
+
+//enviar pdf a tecnico
+exports.sendPdf = async (data, email) => {
+  const year = moment().format("YYYY");
+  const date = moment().format("YYYYMMDD-HHmmss");
+  const orden = data.orden.slice(10);
+  const pdfPath = `${absolutePath}/pdfTransactions/${orden}-${date}.pdf`;
+
+  const doc = new PDFDocument({ size: "A4" });
+
+  doc.image(`${absolutePath}/public/images/sinapsis.jpg`, 20, 30, {
+    width: 300,
+  });
+
+  doc.fontSize(20).text(`${data.sentido}`, 250, 30);
+  doc
+    .fontSize(10)
+    .text(`FECHA: ${moment(data.date).format("DD-MM-YYYY HH:mm")}`, 390, 50);
+  doc.fontSize(12).text(`USUARIO: ${data.usuario}`, 390, 70);
+  doc.fontSize(14).text(`${data.orden}`, 50, 130);
+  doc.fontSize(14).text(`${data.cliente}`, 50, 150);
+  doc.fontSize(14).text(`TECNICO: ${data.tecnico}`, 50, 170);
+  doc.moveTo(40, 200).lineTo(550, 200).stroke();
+  doc.fontSize(14).text("ARTICULOS", 50, 230);
+  let position = 240;
+  for (let articulo of data.articulos) {
+    doc
+      .fontSize(10)
+      .text(
+        `${articulo.codigo} - ${articulo.descripcion} - ${articulo.serie}`,
+        70,
+        (position += 20)
+      );
+  }
+  doc.fontSize(12).text(`${year} - GabySystem `, 220, 730);
+  doc.fontSize(12).text(`(Developed) => Gabriel Godoy  `, 190, 750);
+
+  doc.pipe(fs.createWriteStream(pdfPath));
+  doc.end();
+
+  const body = `Cliente: ${data.cliente} - Orden ${data.orden}`;
+  const subject = `${data.sentido} - ORDEN ${orden}`;
+
+  return await sendMailPdf(email, body, subject, pdfPath);
 };
 
 exports.getBodyCloseWorkOrder = (nrocompro) => {
