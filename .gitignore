@@ -3,4 +3,5 @@
 /public/pdf
 /pdfTransactions
 package-lock.json
+docker-compose.yml
 .env
