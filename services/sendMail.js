@@ -94,7 +94,7 @@ exports.getBodyCloseWorkOrder = (nrocompro) => {
     <br/>
     <br/>
     <p>Tambien podes consultanos por whatsapp</p>
-    <a href="https://wa.me/+543476309819/?text=Hola Sinaspis, te consulto por la mi orden de reparacion ${nrocompro}" target="_blank">Hace click aca para abrir whatsapp</a>
+    <a href="https://wa.me/3476309819?text=Hola Sinaspis, te consulto por la mi orden de reparacion ${nrocompro}" target="_blank">Hace click aca para abrir whatsapp</a>
     <br/>
     <br/>
     <br/>
@@ -243,7 +243,7 @@ exports.getBodyCloseWorkOrder = (nrocompro) => {
                               style="font-size: 0px; line-height: 0px"
                               target="_blank"
                               rel="nofollow"
-                              href="https://wa.me/+543476309819/"
+                              href="https://wa.me/3476309819/"
                               ><img
                                 height="24"
                                 width="24"
