@@ -6,6 +6,7 @@ const urbano_routes = require("./routes/urbano_routes");
 const cookieParser = require("cookie-parser");
 const { requireAuth, checkUser } = require("./middleware/auth");
 const logger = require("./logger/logger");
+const config = require("./config/config");
 
 const app = express();
 
@@ -19,22 +20,22 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 
 //Environment
-logger.info(`NODE_ENV: ${process.env.NODE_ENV}`);
+logger.info(`NODE_ENV: ${config.NODE_ENV}`);
 logger.info(`EXPRESS: ${app.get("env")}`);
 //comment
 
 //Se chequea variables de entorno
-if (!process.env.MONGO_CREDENTIALS) {
+if (!config.MONGO_CREDENTIALS) {
   logger.error("FATAL ERROR: mongo's environment variables missing...");
   process.exit(1);
 }
-if (!process.env.JWT_PRIVATE_KEY) {
+if (!config.JWT_PRIVATE_KEY) {
   logger.error("FATAL ERROR: jwtPrivateKey is not defined...");
   process.exit(1);
 }
 
 // database connection
-const dbURI = `mongodb+srv://${process.env.MONGO_CREDENTIALS}@gabysystem.c81cfnu.mongodb.net/gabysystem?retryWrites=true&w=majority`;
+const dbURI = `mongodb+srv://${config.MONGO_CREDENTIALS}@gabysystem.c81cfnu.mongodb.net/gabysystem?retryWrites=true&w=majority`;
 mongoose
   .connect(dbURI, {
     useNewUrlParser: true,
@@ -43,11 +44,11 @@ mongoose
   })
   .then((result) => {
     logger.info("Connected to mongoDB...");
-    const port = process.env.PORT;
+    const port = config.PORT;
     app.listen(port, () => logger.info(`Listening on port ${port}...`));
   })
   .catch((err) => {
-    logger.error(`MongoDB error: ${err.message}`);
+    logger.error(`Error connecting MongoDB: ${err.message}`);
     process.exit(1);
   });
 

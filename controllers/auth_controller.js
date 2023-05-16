@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const logger = require("../logger/logger");
+const config = require("../config/config");
 
 //handle errors
 const handle_errors = (err, host) => {
@@ -46,7 +47,7 @@ const handle_errors = (err, host) => {
 };
 
 //jwt
-const jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
+const jwtPrivateKey = config.JWT_PRIVATE_KEY;
 const maxAge = 7 * 24 * 60 * 60; //Una semana
 const createToken = (id, isAdmin) => {
   return jwt.sign({ id, isAdmin }, jwtPrivateKey, {
