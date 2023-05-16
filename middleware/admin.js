@@ -10,12 +10,12 @@ module.exports = (req, res, next) => {
   if (token) {
     jwt.verify(token, jwtPrivateKey, async (err, decodedToken) => {
       if (err) {
-        logger.error(err.message);
+        logger.info(err.message);
         next();
       } else {
         let user = await User.findById(decodedToken.id);
         if (!user.isAdmin) {
-          logger.warn(`Usuario: ${user} - Host: ${host} - Access denied!`);
+          logger.info(`Usuario: ${user} - Host: ${host} - Access denied!`);
           return res.status(403).send("Access denied!");
         }
 
@@ -23,7 +23,7 @@ module.exports = (req, res, next) => {
       }
     });
   } else {
-    logger.warn(`NO TOKEN - Host: ${host} - Access denied!`);
+    logger.info(`NO TOKEN - Host: ${host} - Access denied!`);
     return res.status(403).send("Access denied!");
   }
 };

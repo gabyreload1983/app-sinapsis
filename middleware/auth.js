@@ -11,7 +11,7 @@ const requireAuth = (req, res, next) => {
   if (token) {
     jwt.verify(token, jwtPrivateKey, (err, decodedToken) => {
       if (err) {
-        logger.error(`Host: ${host} - Error: ${err.message}`);
+        logger.info(`Host: ${host} - Error: ${err.message}`);
         res.redirect("/login");
       } else {
         next();
@@ -30,7 +30,7 @@ const checkUser = (req, res, next) => {
   if (token) {
     jwt.verify(token, jwtPrivateKey, async (err, decodedToken) => {
       if (err) {
-        logger.error(`Host: ${host} - Error: ${err.message}`);
+        logger.info(`Host: ${host} - Error: ${err.message}`);
         res.locals.user = null;
         next();
       } else {
@@ -42,7 +42,7 @@ const checkUser = (req, res, next) => {
       }
     });
   } else {
-    logger.error(`Host: ${host} - sin JWT`);
+    logger.info(`Host: ${host} - sin JWT`);
     res.locals.user = null;
     next();
   }
