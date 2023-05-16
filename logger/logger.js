@@ -9,12 +9,30 @@ const customFormat = format.combine(
   })
 );
 
-const logger = createLogger({
-  format: customFormat,
-  transports: [
-    new transports.Console({ level: "silly" }),
-    new transports.File({ filename: "./logger/files/app.log", level: "info" }),
-  ],
-});
+let logger;
+
+if (process.env.NODE_ENV === "production") {
+  logger = createLogger({
+    format: customFormat,
+    transports: [
+      new transports.Console({ level: "error" }),
+      new transports.File({
+        filename: "./logger/files/prod.log",
+        level: "error",
+      }),
+    ],
+  });
+} else {
+  logger = createLogger({
+    format: customFormat,
+    transports: [
+      new transports.Console({ level: "debug" }),
+      new transports.File({
+        filename: "./logger/files/dev.log",
+        level: "debug",
+      }),
+    ],
+  });
+}
 
 module.exports = logger;

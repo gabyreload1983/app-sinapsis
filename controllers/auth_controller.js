@@ -4,7 +4,7 @@ const logger = require("../logger/logger");
 
 //handle errors
 const handle_errors = (err, host) => {
-  logger.error(`Host: ${host} - error: ${err.message} - code: ${err.code}`);
+  logger.info(`Host: ${host} - error: ${err.message} - code: ${err.code}`);
   let errors = { email: "", codigo_tecnico: "", password: "" };
 
   //invalid email
