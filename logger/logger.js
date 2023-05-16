@@ -1,4 +1,5 @@
 const { createLogger, transports, format } = require("winston");
+const config = require("../config/config");
 
 const customFormat = format.combine(
   format.timestamp({ format: "DD-MM-YYYY T hh:mm:ss A" }),
@@ -11,7 +12,7 @@ const customFormat = format.combine(
 
 let logger;
 
-if (process.env.NODE_ENV === "production") {
+if (config.NODE_ENV === "production") {
   logger = createLogger({
     format: customFormat,
     transports: [

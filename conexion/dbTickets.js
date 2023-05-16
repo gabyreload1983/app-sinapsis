@@ -1,10 +1,11 @@
 const mysql = require("mysql");
+const config = require("../config/config");
 
 const connectionTickets = mysql.createConnection({
-  host: process.env.TICKET_HOST,
-  database: process.env.TICKET_DB,
-  password: process.env.TICKET_PASS,
-  user: process.env.TICKET_USER,
+  host: config.TICKET_HOST,
+  database: config.TICKET_DB,
+  password: config.TICKET_PASS,
+  user: config.TICKET_USER,
 });
 
 module.exports = connectionTickets;

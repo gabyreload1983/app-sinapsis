@@ -4,22 +4,23 @@ const moment = require("moment");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 const absolutePath = require("../utils");
+const config = require("../config/config");
 
 const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
+  host: config.MAIL_HOST,
   port: 465,
   secure: true,
   auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASSWORD,
+    user: config.MAIL_USER,
+    pass: config.MAIL_PASSWORD,
   },
 });
 
 exports.sendMail = async (mail, body, subject) => {
   return await transporter.sendMail({
-    from: process.env.MAIL_FROM,
+    from: config.MAIL_FROM,
     to: mail,
-    bcc: `${process.env.MAIL_BCC}`,
+    bcc: `${config.MAIL_BCC}`,
     subject: subject,
     html: body,
   });
@@ -27,9 +28,9 @@ exports.sendMail = async (mail, body, subject) => {
 
 const sendMailPdf = async (mail, body, subject, filePath = "") => {
   return await transporter.sendMail({
-    from: process.env.MAIL_FROM,
+    from: config.MAIL_FROM,
     to: mail,
-    bcc: `${process.env.MAIL_BCC}`,
+    bcc: `${config.MAIL_BCC}`,
     subject: subject,
     html: body,
     attachments: {
