@@ -1,25 +1,13 @@
-# ENVIRONMENT VARIABLES
+# DEVELOPMENT
 
-- JWT_PRIVATE_KEY
-- MONGO_CREDENTIALS
-- URBANO_HOST
-- URBANO_DB
-- URBANO_PASS
-- URBANO_USER
-- TICKET_HOST
-- TICKET_DB
-- TICKET_PASS
-- TICKET_USER
-- PORT
-- MAIL_HOST
-- MAIL_USER
-- MAIL_PASSWORD
-- MAIL_FROM
-- MAIL_BCC
-- NODE_ENV
+- Rename the .env.exmple file to .env
+- Complete environment variables
+- Run npm install
+- Run npm run dev to start
 
-# DEPLOY
+# DEPLOY WITH DOCKER
 
 - Clone the repo.
-- Create docker-compose.yml and put in the root directory
+- Rename the docker-compose.example.yml file to docker-compose.yml
+- Complete environment variables
 - Run docker-compose up -d
