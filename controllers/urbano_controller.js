@@ -24,6 +24,7 @@ function get_from_urbano(querySelect) {
   return new Promise((resolve, reject) => {
     connection_urbano.query(querySelect, (error, result) => {
       if (error) {
+        logger.error(error);
         reject(new Error(error));
       } else {
         resolve(result);
@@ -149,6 +150,7 @@ exports.orden_de_reparacion = async (req, res) => {
       `orden_de_reparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
   }
+  res.status(500).send({ status: "error", message: error.message });
 };
 
 //Ordenes Pendientes del taller segun sector
@@ -186,6 +188,7 @@ exports.ordenes_pendientes = async (req, res) => {
     logger.error(
       `ordenes_pendientes - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -221,6 +224,7 @@ exports.ordenes_en_proceso = async (req, res) => {
     logger.error(
       `ordenes_en_proceso - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -363,6 +367,7 @@ exports.estadisticas_tecnicos = async (req, res) => {
     logger.error(
       `estadisticas_tecnicos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -395,6 +400,7 @@ exports.tomar_orden = async (req, res) => {
     logger.error(
       `tomar_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -435,6 +441,7 @@ exports.ordenes_para_retirar = async (req, res) => {
     logger.error(
       `ordenes_para_retirar - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -466,6 +473,7 @@ exports.mis_ordenes_tomadas = async (req, res) => {
     logger.error(
       `mis_ordenes_tomadas - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -495,6 +503,7 @@ exports.guardar_diagnostico_orden = async (req, res) => {
     logger.error(
       `guardar_diagnostico_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -515,6 +524,7 @@ exports.agregar_articulo_orden = async (req, res) => {
     logger.error(
       `agregar_articulo_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -535,6 +545,7 @@ exports.quitar_articulo_orden = async (req, res) => {
     logger.error(
       `quitar_articulo_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -590,7 +601,7 @@ exports.buscar_orden_reparacion = async (req, res) => {
     logger.error(
       `buscar_orden_reparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400);
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -643,10 +654,7 @@ exports.buscar_articulo = async (req, res) => {
     logger.error(
       `buscar_articulo - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400).send({
-      titulo: "Buscar orden",
-      articulos: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -681,6 +689,7 @@ exports.buscar_serie = async (req, res) => {
     logger.error(
       `buscar_serie - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -754,10 +763,7 @@ exports.ingresar_articulos = async (req, res) => {
     logger.error(
       `ingresar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400).send({
-      titulo: "ingresar_articulos",
-      transaccion: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -832,10 +838,7 @@ exports.quitar_articulos = async (req, res) => {
     logger.error(
       `quitar_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400).send({
-      titulo: "quitar_articulos",
-      transaccion: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -894,10 +897,7 @@ exports.salida_orden = async (req, res) => {
     logger.error(
       `salida_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400).send({
-      titulo: "Salida Orden",
-      transaccion: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -953,10 +953,7 @@ exports.cerrar_orden = async (req, res) => {
     logger.error(
       `cerrar_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400).send({
-      titulo: "Cerrar Orden",
-      transaccion: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -989,13 +986,7 @@ exports.liberar_orden = async (req, res) => {
       });
     }
   } catch (error) {
-    logger.error(
-      `liberar_orden - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
-    );
-    res.status(400).send({
-      titulo: "Liberar Orden",
-      transaccion: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -1024,10 +1015,7 @@ exports.buscar_ingreso_egreso_articulos = async (req, res) => {
     logger.error(
       `buscar_ingreso_egreso_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400).send({
-      titulo: "buscar_ingreso_egreso_articulos",
-      transaccion: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -1051,10 +1039,7 @@ exports.historial_ingreso_egreso_articulos = async (req, res) => {
     logger.error(
       `historial_ingreso_egreso_articulos - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
-    res.status(400).send({
-      titulo: "historial_ingreso_egreso_articulos",
-      transaccion: false,
-    });
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
 
@@ -1096,5 +1081,6 @@ exports.ordenesSinReparacion = async (req, res) => {
     logger.error(
       `ordenesSinReparacion - Usuario: ${req.body.codigo_tecnico_log} - Host: ${req.body.host} - Error: ${error.message}`
     );
+    res.status(500).send({ status: "error", message: error.message });
   }
 };
